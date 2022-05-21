@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use App\Http\Resources\TagCollection;
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Resources\TagResource;
 class TagController extends Controller
 {
   /**
@@ -20,24 +22,18 @@ class TagController extends Controller
   }
 
   /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    //
-  }
-
-  /**
    * Store a newly created resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(StoreTagRequest $request)
   {
-    //
+    $tag = Tag::create($request->validated());
+    return response()->json([
+      'message' => 'Tag Created successfully!',
+      'id' => $tag->id,
+    ]);
   }
 
   /**
@@ -48,17 +44,8 @@ class TagController extends Controller
    */
   public function show(Tag $tag)
   {
-    //
-  }
+    return new TagResource($tag);
 
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  \App\Models\Tag  $tag
-   * @return \Illuminate\Http\Response
-   */
-  public function edit(Tag $tag)
-  {
     //
   }
 
@@ -69,9 +56,13 @@ class TagController extends Controller
    * @param  \App\Models\Tag  $tag
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, Tag $tag)
+  public function update(StoreTagRequest $request, Tag $tag)
   {
-    //
+    $tag->update($request->validated());
+    return response()->json([
+      'message' => 'Tag Updated successfully!',
+      'id' => $tag->id,
+    ]);
   }
 
   /**
@@ -82,6 +73,11 @@ class TagController extends Controller
    */
   public function destroy(Tag $tag)
   {
-    //
+    $tag->delete();
+
+    return response()->json([
+      'message' => 'Tag Deleted successfully!',
+      'id' => $tag->id,
+    ]);
   }
 }

@@ -37,17 +37,15 @@ class PostController extends Controller
    */
   public function store(StorePostRequest $request)
   {
-    $post = Post::create($request->all());
-
-    return response()->json(
-      [
-        'status' => true,
-        'message' => 'Post Created successfully!',
-        'post' => $post,
-      ],
-      200
-    );
-    //
+    $validated = $request->safe()->merge([
+      'user_id' => 1,
+    ]);
+    /* dd($validated); */
+    $post = Post::create($validated->all());
+    return response()->json([
+      'message' => 'Post created successfully!',
+      'id' => $post->id,
+    ]);
   }
 
   /**
@@ -58,6 +56,7 @@ class PostController extends Controller
    */
   public function show(Post $post)
   {
+    return new PostResource($post);
     //
   }
 
@@ -70,17 +69,15 @@ class PostController extends Controller
    */
   public function update(StorePostRequest $request, Post $post)
   {
-    //
-    $post->update($request->all());
+    $validated = $request->safe()->merge([
+      'user_id' => 1,
+    ]);
 
-    return response()->json(
-      [
-        'status' => true,
-        'message' => 'Post Updated successfully!',
-        'post' => $post,
-      ],
-      200
-    );
+    $post->update($validated->all());
+    return response()->json([
+      'message' => 'Post updated successfully!',
+      'id' => $post->id,
+    ]);
   }
 
   /**
@@ -91,15 +88,11 @@ class PostController extends Controller
    */
   public function destroy(Post $post)
   {
-    //
     $post->delete();
 
-    return response()->json(
-      [
-        'status' => true,
-        'message' => 'Post Deleted successfully!',
-      ],
-      200
-    );
+    return response()->json([
+      'message' => 'Post deleted successfully!',
+      'id' => $post->id,
+    ]);
   }
 }
