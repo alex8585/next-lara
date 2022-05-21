@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -38,5 +39,76 @@ class CategoryTest extends TestCase
           ])
         )
     );
+  }
+
+  public function test_create_category()
+  {
+    $response = $this->post('api/v1/categories', [
+      'name' => 'cat1',
+    ]);
+
+    $response->assertStatus(200);
+    $response->assertJson(
+      fn(AssertableJson $json) => $json
+        ->hasAll('id', 'message')
+        ->where('message', 'Category created successfully!')
+    );
+
+    /* $response->dump(); */
+  }
+
+  public function test_show_category()
+  {
+    $this->seed(CategorySeeder::class);
+    $catId = Category::first()->id;
+
+    $response = $this->get("api/v1/categories/${catId}");
+
+    /* $response->dump(); */
+    $response->assertStatus(200);
+    $response->assertJson(
+      fn(AssertableJson $json) => $json
+        ->hasAll('id', 'name')
+        ->where('id', $catId)
+    );
+  }
+
+  public function test_update_category()
+  {
+    $this->seed(CategorySeeder::class);
+    $catId = Category::first()->id;
+
+    $response = $this->post("api/v1/categories/${catId}", [
+      'name' => 'cat2',
+      '_method' => 'PUT',
+    ]);
+
+    $response->assertStatus(200);
+    $response->assertJson(
+      fn(AssertableJson $json) => $json
+        ->hasAll('id', 'message')
+        ->where('id', $catId)
+        ->where('message', 'Category updated successfully!')
+    );
+
+    /* $response->dump(); */
+  }
+
+  public function test_delete_category()
+  {
+    $this->seed(CategorySeeder::class);
+    $catId = Category::first()->id;
+
+    $response = $this->delete("api/v1/categories/${catId}");
+
+    $response->assertStatus(200);
+    $response->assertJson(
+      fn(AssertableJson $json) => $json
+        ->hasAll('id', 'message')
+        ->where('id', $catId)
+        ->where('message', 'Category deleted successfully!')
+    );
+
+    /* $response->dump(); */
   }
 }

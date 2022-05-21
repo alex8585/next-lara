@@ -31,7 +31,7 @@ class TagController extends Controller
   {
     $tag = Tag::create($request->validated());
     return response()->json([
-      'message' => 'Tag Created successfully!',
+      'message' => 'Tag created successfully!',
       'id' => $tag->id,
     ]);
   }
@@ -60,7 +60,7 @@ class TagController extends Controller
   {
     $tag->update($request->validated());
     return response()->json([
-      'message' => 'Tag Updated successfully!',
+      'message' => 'Tag updated successfully!',
       'id' => $tag->id,
     ]);
   }
@@ -76,7 +76,7 @@ class TagController extends Controller
     $tag->delete();
 
     return response()->json([
-      'message' => 'Tag Deleted successfully!',
+      'message' => 'Tag deleted successfully!',
       'id' => $tag->id,
     ]);
   }

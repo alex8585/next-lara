@@ -18,6 +18,8 @@ class PostResource extends JsonResource
    *
    */
 
+  public static $wrap = null;
+
   public function toArray($request)
   {
     /* $tc = new TimeConverter(); */
@@ -30,7 +32,7 @@ class PostResource extends JsonResource
       'user_id' => $this->user_id,
       'title' => $this->title,
       'description' => $this->description,
-      'creqted_at_str' => $created_at,
+      'created_at_str' => $created_at,
       'updated_at_str' => $updated_at,
       'created_at' => Tc::toTimestamp($created_at),
       'updated_at' => Tc::toTimestamp($updated_at),
