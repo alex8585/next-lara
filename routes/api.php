@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+
+use App\Http\Controllers\Api\v1\PostController;
+use App\Http\Controllers\Api\v1\TagController;
+use App\Http\Controllers\Api\v1\CategoryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,22 +18,25 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+/* Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) { */
+/*   return $request->user(); */
+/* }); */
+
+Route::prefix('v1/auth')->group(function () {
+  Route::middleware(['api', 'auth:api'])->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::get('me', [AuthController::class, 'me']);
+  });
+  Route::middleware(['api'])->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+  });
 });
 
-
-Route::group([
-
-    'middleware' => 'api',
-    'prefix' => 'auth'
-
-], function ($router) {
-
-    Route::post('login',[  AuthController::class,'login' ]);
-
-    Route::post('logout',[  AuthController::class, 'logout' ]);
-    Route::post('refresh',[  AuthController::class,'refresh' ]);
-    Route::get('me',[  AuthController::class,'me' ]);
-
+Route::prefix('v1')->group(function () {
+  Route::middleware(['api'])->group(function () {
+    Route::apiResource('posts', PostController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('tags', TagController::class);
+  });
 });

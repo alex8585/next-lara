@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Command\SignalableCommandInterface;
+use Illuminate\Support\Facades\Cache;
+
+class Hello extends Command 
+{
+    /* public function getSubscribedSignals(): array */ 
+    /* { */
+    /*     return [SIGINT, SIGTERM]; */
+    /* } */
+
+    /* public function handleSignal(int $signal): void */
+    /* { */
+    /*     if ($signal === SIGINT) { */
+
+    /*     $this->error('SIGINT'); */
+    /*         return; */
+    /*     } */
+    /* } */
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'hello';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        echo 'a';
+        $lock = Cache::lock('foo', 10);
+        if ($lock->get()) {
+    echo 'b'; 
+    $lock->release();
+}
+       echo 'c'; 
+        
+        
+        
+        /* $value = Cache::remember('foo', 1000, function () { */
+    /*     return '9999' ; */
+    /* }); */
+/* dd($value); */
+        /* $this->info('Something went wrong!'); */
+        /* sleep(10); */
+        return 0;
+    }
+}
