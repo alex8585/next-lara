@@ -2,13 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use App\Mail\OrderShipped;
+/* use App\Mail\OrderShipped; */
 use App\Jobs\ProcessPodcast;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use App\Events\OrderShipped;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Cookie;
 */
 
 Route::get('/', function () {
+  OrderShipped::dispatch('2222');
   /* User::factory()->create(); */
   /* dump(Cookie::get()); */
   /* dump(csrf_token()); */
@@ -31,8 +33,9 @@ Route::get('/', function () {
   /*     ->session() */
   /*     ->all() */
   /* ); */
-
-  return '222222';
+  /* $v = Cache::get('key'); */
+  /* dd($v); */
+  /* return '222222'; */
   /* echo (new OrderShipped())->render(); */
 
   /* $path = base_path('storage'); */

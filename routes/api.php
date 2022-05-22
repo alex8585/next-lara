@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\v1\PostController;
 use App\Http\Controllers\Api\v1\TagController;
 use App\Http\Controllers\Api\v1\CategoryController;
+use App\Http\Controllers\Api\v1\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -38,5 +39,6 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('posts', PostController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('tags', TagController::class);
+    Route::apiResource('users', UserController::class);
   });
 });
