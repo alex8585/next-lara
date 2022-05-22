@@ -54,6 +54,7 @@ class TagTest extends TestCase
         ->where('message', 'Tag created successfully!')
     );
 
+    $this->assertDatabaseCount('tags', 1);
     /* $response->dump(); */
   }
 
@@ -78,8 +79,9 @@ class TagTest extends TestCase
     $this->seed(TagSeeder::class);
     $tagId = Tag::first()->id;
 
+    $tagName = 'test-tag-name';
     $response = $this->post("api/v1/tags/${tagId}", [
-      'name' => 'tag2',
+      'name' => $tagName,
       '_method' => 'PUT',
     ]);
 
@@ -90,25 +92,28 @@ class TagTest extends TestCase
         ->where('id', $tagId)
         ->where('message', 'Tag updated successfully!')
     );
-
+    $this->assertDatabaseHas('tags', [
+      'name' => $tagName,
+    ]);
     /* $response->dump(); */
   }
 
   public function test_delete_tag()
   {
     $this->seed(TagSeeder::class);
-    $tagId = Tag::first()->id;
+    $tag = Tag::first();
 
-    $response = $this->delete("api/v1/tags/${tagId}");
+    $response = $this->delete("api/v1/tags/{$tag->id}");
 
     $response->assertStatus(200);
     $response->assertJson(
       fn(AssertableJson $json) => $json
         ->hasAll('id', 'message')
-        ->where('id', $tagId)
+        ->where('id', $tag->id)
         ->where('message', 'Tag deleted successfully!')
     );
-
+    $this->assertDatabaseCount('tags', 4);
+    $this->assertModelMissing($tag);
     /* $response->dump(); */
   }
 }

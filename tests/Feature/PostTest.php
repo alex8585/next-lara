@@ -67,6 +67,7 @@ class PostTest extends TestCase
         ->where('message', 'Post created successfully!')
     );
 
+    $this->assertDatabaseCount('posts', 1);
     /* $response->dump(); */
   }
 
@@ -102,8 +103,9 @@ class PostTest extends TestCase
     $this->seed(postSeeder::class);
     $postId = post::first()->id;
 
+    $postTitle = 'test-post-title';
     $response = $this->post("api/v1/posts/${postId}", [
-      'title' => 'post-title',
+      'title' => $postTitle,
       'description' => 'post-description',
       'user_id' => 1,
       '_method' => 'PUT',
@@ -117,23 +119,28 @@ class PostTest extends TestCase
         ->where('message', 'Post updated successfully!')
     );
 
+    $this->assertDatabaseHas('posts', [
+      'title' => $postTitle,
+    ]);
     /* $response->dump(); */
   }
 
   public function test_delete_post()
   {
     $this->seed(postSeeder::class);
-    $postId = post::first()->id;
+    $post = post::first();
 
-    $response = $this->delete("api/v1/posts/${postId}");
+    $response = $this->delete("api/v1/posts/{$post->id}");
 
     /* $response->dump(); */
     $response->assertStatus(200);
     $response->assertJson(
       fn(AssertableJson $json) => $json
         ->hasAll('id', 'message')
-        ->where('id', $postId)
+        ->where('id', $post->id)
         ->where('message', 'Post deleted successfully!')
     );
+    $this->assertDatabaseCount('posts', 4);
+    $this->assertModelMissing($post);
   }
 }

@@ -54,6 +54,7 @@ class CategoryTest extends TestCase
         ->where('message', 'Category created successfully!')
     );
 
+    $this->assertDatabaseCount('categories', 1);
     /* $response->dump(); */
   }
 
@@ -78,8 +79,9 @@ class CategoryTest extends TestCase
     $this->seed(CategorySeeder::class);
     $catId = Category::first()->id;
 
+    $catName = 'test-cat-name';
     $response = $this->post("api/v1/categories/${catId}", [
-      'name' => 'cat2',
+      'name' => $catName,
       '_method' => 'PUT',
     ]);
 
@@ -91,24 +93,29 @@ class CategoryTest extends TestCase
         ->where('message', 'Category updated successfully!')
     );
 
+    $this->assertDatabaseHas('categories', [
+      'name' => $catName,
+    ]);
     /* $response->dump(); */
   }
 
   public function test_delete_category()
   {
     $this->seed(CategorySeeder::class);
-    $catId = Category::first()->id;
+    $cat = Category::first();
 
-    $response = $this->delete("api/v1/categories/${catId}");
+    $response = $this->delete("api/v1/categories/{$cat->id}");
 
     $response->assertStatus(200);
     $response->assertJson(
       fn(AssertableJson $json) => $json
         ->hasAll('id', 'message')
-        ->where('id', $catId)
+        ->where('id', $cat->id)
         ->where('message', 'Category deleted successfully!')
     );
 
+    $this->assertDatabaseCount('categories', 4);
+    $this->assertModelMissing($cat);
     /* $response->dump(); */
   }
 }
