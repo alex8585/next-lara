@@ -24,7 +24,7 @@ class StoreTagRequest extends FormRequest
   public function rules()
   {
     return [
-      'name' => 'required|max:70',
+      'name' => 'required|max:5',
     ];
   }
 }

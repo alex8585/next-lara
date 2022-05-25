@@ -19,7 +19,12 @@ class TagController extends Controller
   {
     $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
 
-    return new TagCollection(Tag::filter()->paginate($perPage));
+    $query = Tag::queryFilter()
+      ->sort()
+      ->paginate($perPage);
+
+    return new TagCollection($query);
+    /* return new TagCollection(Tag::sort()->paginate($perPage)); */
   }
 
   /**
