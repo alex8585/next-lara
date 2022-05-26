@@ -9,27 +9,26 @@ class PostCollection extends ResourceCollection
   /**
    * Transform the resource collection into an array.
    *
-   * @param  \Illuminate\Http\Request  $request
+   * @param \Illuminate\Http\Request $request
+   *
    * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
    */
   public function toArray($request)
   {
     return [
       'data' => $this->collection,
+      'metaData' => [
+        'rowsNumber' => $this->total(),
+        'rowsPerPage' => $this->perPage(),
+        'page' => $this->currentPage(),
+      ],
     ];
   }
 
   public function withResponse($request, $response)
   {
-    $response->header('X-Value', '22222');
-  }
-  public function with($request)
-  {
-    return [
-      'key' => 'value',
-      'meta' => [
-        'self' => 'link-value',
-      ],
-    ];
+    $jsonResponse = json_decode($response->getContent(), true);
+    unset($jsonResponse['links'], $jsonResponse['meta']);
+    $response->setContent(json_encode($jsonResponse));
   }
 }
