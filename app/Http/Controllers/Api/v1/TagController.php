@@ -17,14 +17,17 @@ class TagController extends Controller
    */
   public function index()
   {
-    $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
+    $perPage = min(100, (int) request()->get('perPage', 5));
 
-    $query = Tag::queryFilter()
-      ->sort()
-      ->paginate($perPage);
+    $query = Tag::queryFilter()->sort();
 
-    return new TagCollection($query);
-    /* return new TagCollection(Tag::sort()->paginate($perPage)); */
+    if ($perPage > -1) {
+      $query = $query->paginate($perPage);
+
+      return new TagCollection($query);
+    }
+
+    return $query->get();
   }
 
   /**

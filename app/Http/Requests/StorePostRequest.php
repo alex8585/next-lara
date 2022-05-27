@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePostRequest extends FormRequest
 {
@@ -26,6 +28,8 @@ class StorePostRequest extends FormRequest
     return [
       'title' => 'required|max:70',
       'description' => 'required',
+      'tags' => ['array'],
+      'category_id' => [Rule::exists(Category::class, 'id')],
     ];
   }
 }

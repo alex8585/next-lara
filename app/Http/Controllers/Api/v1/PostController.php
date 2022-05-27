@@ -39,11 +39,13 @@ class PostController extends Controller
    */
   public function store(StorePostRequest $request)
   {
-    $validated = $request->safe()->merge([
-      'user_id' => 1,
-    ]);
+    $validated = $request->safe(['title', 'description']);
+    $validated['user_id'] = 1;
+
+    $tagsIds = collect($request->safe()->tags)->pluck('value');
     /* dd($validated); */
-    $post = Post::create($validated->all());
+    $post = Post::create($validated);
+    $post->tags()->sync($tagsIds);
 
     return response()->json([
       'message' => 'Post created successfully!',
@@ -75,7 +77,10 @@ class PostController extends Controller
       'user_id' => 1,
     ]);
 
+    $tagsIds = collect($request->safe()->tags)->pluck('value');
+
     $post->update($validated->all());
+    $post->tags()->sync($tagsIds);
 
     return response()->json([
       'message' => 'Post updated successfully!',

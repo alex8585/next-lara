@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Prunable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
+/* use Spatie\Tags\HasTags; */
+
 class Post extends Model
 {
   use HasFactory;
   use Prunable;
-
+  protected $guarded = ['tags'];
+  /* use HasTags; */
   protected $sortFields = ['id', 'title'];
 
   protected $casts = [
@@ -29,7 +32,7 @@ class Post extends Model
 
   public function tags()
   {
-    return $this->belongsToMany(Tag::class);
+    return $this->belongsToMany(Tag::class)->withTimestamps();
   }
 
   public static function queryFilter()

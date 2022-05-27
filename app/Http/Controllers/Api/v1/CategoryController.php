@@ -17,16 +17,17 @@ class CategoryController extends Controller
    */
   public function index()
   {
-    $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
+    $perPage = min(100, (int) request()->get('perPage', 5));
 
-    $query = Category::queryFilter()
-      ->sort()
-      ->paginate($perPage);
+    $query = Category::queryFilter()->sort();
 
-    return new CategoryCollection($query);
+    if ($perPage > -1) {
+      $query = $query->paginate($perPage);
 
-    //
-    //   return new CategoryCollection(Category::paginate(5));
+      return new CategoryCollection($query);
+    }
+
+    return $query->get();
   }
 
   /**
