@@ -2,21 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
-
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 class AuthController extends Controller
 {
   /**
    * Create a new AuthController instance.
-   *
-   * @return void
    */
   public function __construct()
   {
     /* $this->middleware('auth:api', ['except' => ['login']]); */
+  }
+
+  public function register()
+  {
+    $validated = request()->validate([
+      'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+      'password' => ['required', Rules\Password::defaults()],
+    ]);
+
+    /* return response()->json($validated); */
+    $user = User::create([
+      'name' => $validated['email'],
+
+      'email' => $validated['email'],
+      'password' => Hash::make($validated['password']),
+    ]);
+
+    event(new Registered($user));
+
+    Auth::login($user);
+
+    return $this->respondWithToken(auth()->refresh());
+    /* return response()->json(auth()->user()); */
   }
 
   /**
@@ -71,7 +93,7 @@ class AuthController extends Controller
   /**
    * Get the token array structure.
    *
-   * @param  string $token
+   * @param string $token
    *
    * @return \Illuminate\Http\JsonResponse
    */

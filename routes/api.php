@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\PostController;
 use App\Http\Controllers\Api\v1\TagController;
-use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\UserController;
+use App\Http\Controllers\AuthController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,6 +31,7 @@ Route::prefix('v1/auth')->group(function () {
   });
   Route::middleware(['api'])->group(function () {
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
   });
 });
 
