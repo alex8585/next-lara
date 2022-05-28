@@ -39,12 +39,13 @@ class PostController extends Controller
    */
   public function store(StorePostRequest $request)
   {
-    $validated = $request->safe(['title', 'description']);
+    $validated = $request->safe();
+
+    $validated['category_id'] = $request->safe()->category['value'];
     $validated['user_id'] = 1;
 
     $tagsIds = collect($request->safe()->tags)->pluck('value');
-    /* dd($validated); */
-    $post = Post::create($validated);
+    $post = Post::create($validated->all());
     $post->tags()->sync($tagsIds);
 
     return response()->json([
@@ -74,6 +75,7 @@ class PostController extends Controller
   public function update(StorePostRequest $request, Post $post)
   {
     $validated = $request->safe()->merge([
+      'category_id' => $request->safe()->category['value'],
       'user_id' => 1,
     ]);
 

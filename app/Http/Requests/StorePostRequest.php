@@ -29,7 +29,11 @@ class StorePostRequest extends FormRequest
       'title' => 'required|max:70',
       'description' => 'required',
       'tags' => ['array'],
-      'category_id' => [Rule::exists(Category::class, 'id')],
+      'category.value' => [
+        'bail',
+        'nullable',
+        Rule::exists(Category::class, 'id'),
+      ],
     ];
   }
 }

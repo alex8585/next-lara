@@ -14,7 +14,7 @@ class Post extends Model
 {
   use HasFactory;
   use Prunable;
-  protected $guarded = ['tags'];
+  protected $guarded = ['tags', 'category'];
   /* use HasTags; */
   protected $sortFields = ['id', 'title'];
 
