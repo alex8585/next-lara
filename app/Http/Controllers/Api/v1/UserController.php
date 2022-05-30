@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+  public function __construct()
+  {
+    $this->authorizeResource(User::class, 'user');
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -16,34 +23,41 @@ class UserController extends Controller
    */
   public function index()
   {
-    return new UserCollection(User::paginate(5));
-  }
+    $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
 
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    //
+    $query = User::queryFilter()
+      ->sort()
+      ->paginate($perPage);
+
+    return new UserCollection($query);
   }
 
   /**
    * Store a newly created resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(StoreUserRequest $request)
   {
+    $user = User::create([
+      'name' => $request->safe()->name,
+      'email' => $request->safe()->email,
+      'password' => Hash::make($request->safe()->password),
+    ]);
+
+    return response()->json([
+      'message' => 'User created successfully!',
+      'id' => $user->id,
+    ]);
+
     //
   }
 
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param int $id
+   *
    * @return \Illuminate\Http\Response
    */
   public function show($id)
@@ -52,36 +66,40 @@ class UserController extends Controller
   }
 
   /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function edit($id)
-  {
-    //
-  }
-
-  /**
    * Update the specified resource in storage.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
+   * @param int $id
+   *
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(UpdateUserRequest $request, User $user)
   {
-    //
+    $user->update([
+      'name' => $request->safe()->name,
+      'email' => $request->safe()->email,
+      'password' => Hash::make($request->safe()->password),
+    ]);
+
+    return response()->json([
+      'message' => 'User updated successfully!',
+      'id' => $user->id,
+    ]);
   }
 
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
+   * @param int $id
+   *
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function destroy(User $user)
   {
-    //
+    $user->delete();
+
+    return response()->json([
+      'message' => 'User deleted successfully!',
+      'id' => $user->id,
+    ]);
   }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Category;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryCollection extends ResourceCollection
 {
@@ -15,12 +17,17 @@ class CategoryCollection extends ResourceCollection
    */
   public function toArray($request)
   {
+    $cat = new Category();
+
     return [
       'data' => $this->collection,
       'metaData' => [
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
+        'can_create' => Auth::user()->can('create', Category::class),
+        'can_update' => Auth::user()->can('update', $cat),
+        'can_delete' => Auth::user()->can('delete', $cat),
       ],
     ];
   }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Post;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class PostCollection extends ResourceCollection
 {
@@ -15,12 +17,17 @@ class PostCollection extends ResourceCollection
    */
   public function toArray($request)
   {
+    $post = new Post();
+
     return [
       'data' => $this->collection,
       'metaData' => [
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
+        'can_create' => Auth::user()->can('create', Post::class),
+        'can_update' => Auth::user()->can('update', $post),
+        'can_delete' => Auth::user()->can('delete', $post),
       ],
     ];
   }

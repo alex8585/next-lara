@@ -10,6 +10,11 @@ use App\Models\Tag;
 
 class TagController extends Controller
 {
+  public function __construct()
+  {
+    $this->authorizeResource(Tag::class, 'tag');
+  }
+
   /**
    * Display a listing of the resource.
    *

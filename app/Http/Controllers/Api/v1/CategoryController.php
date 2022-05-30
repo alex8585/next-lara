@@ -10,6 +10,11 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+  public function __construct()
+  {
+    $this->authorizeResource(Category::class, 'category');
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -83,7 +88,6 @@ class CategoryController extends Controller
    */
   public function destroy(Category $category)
   {
-    //
     $category->delete();
 
     return response()->json([

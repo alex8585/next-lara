@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 
-class StoreTagRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
   /**
    * Determine if the user is authorized to make this request.
@@ -23,8 +25,17 @@ class StoreTagRequest extends FormRequest
    */
   public function rules()
   {
+    $user = $this->route('user');
+
     return [
-      'name' => 'required|max:50',
+      'name' => ['required', 'max:50'],
+      'email' => [
+        'required',
+        'max:50',
+        'email',
+        Rule::unique('users')->ignore($user->id),
+      ],
+      'password' => ['required', Rules\Password::defaults()],
     ];
   }
 }

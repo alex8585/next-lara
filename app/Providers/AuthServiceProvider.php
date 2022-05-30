@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
+use App\Policies\PostPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -14,12 +16,11 @@ class AuthServiceProvider extends ServiceProvider
    */
   protected $policies = [
     // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+    /* Post::class => PostPolicy::class, */
   ];
 
   /**
    * Register any authentication / authorization services.
-   *
-   * @return void
    */
   public function boot()
   {
@@ -27,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
 
     ResetPassword::createUrlUsing(function ($notifiable, $token) {
       return config('app.frontend_url') .
-        "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+        "/password-reset/{$token}?email={$notifiable->getEmailForPasswordReset()}";
     });
 
     //

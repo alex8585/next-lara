@@ -16,6 +16,11 @@ class PostController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
+  public function __construct()
+  {
+    $this->authorizeResource(Post::class, 'post');
+  }
+
   public function index()
   {
     $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);

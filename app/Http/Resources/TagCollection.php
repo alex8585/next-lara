@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Tag;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class TagCollection extends ResourceCollection
 {
@@ -15,12 +17,17 @@ class TagCollection extends ResourceCollection
    */
   public function toArray($request)
   {
+    $tag = new Tag();
+
     return [
       'data' => $this->collection,
       'metaData' => [
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
+        'can_create' => Auth::user()->can('create', Tag::class),
+        'can_update' => Auth::user()->can('update', $tag),
+        'can_delete' => Auth::user()->can('delete', $tag),
       ],
     ];
 

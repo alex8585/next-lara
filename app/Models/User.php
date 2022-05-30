@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-  use HasApiTokens, HasFactory, Notifiable;
+  use HasApiTokens;
+  use HasFactory;
+  use Notifiable;
 
   /**
    * The attributes that are mass assignable.
@@ -28,6 +30,8 @@ class User extends Authenticatable implements JWTSubject
    */
   protected $hidden = ['password', 'remember_token'];
 
+  protected $sortFields = ['id', 'name'];
+
   /**
    * The attributes that should be cast.
    *
@@ -36,12 +40,34 @@ class User extends Authenticatable implements JWTSubject
   protected $casts = [
     'email_verified_at' => 'datetime',
   ];
+
   public function getJWTIdentifier()
   {
     return $this->getKey();
   }
+
   public function getJWTCustomClaims()
   {
     return [];
+  }
+
+  public static function queryFilter()
+  {
+    return QueryBuilder::for(self::class)->allowedFilters([
+      AllowedFilter::exact('id'),
+      AllowedFilter::partial('name'),
+    ]);
+  }
+
+  public function scopeSort($query)
+  {
+    $direction = request()->boolean('descending', true) ? 'ASC' : 'DESC';
+    $order = request()->get('orderBy', 'id');
+
+    $isIn = in_array($order, $this->sortFields);
+
+    $query->when($isIn, function ($query) use ($order, $direction) {
+      $query->orderBy($order, $direction);
+    });
   }
 }
