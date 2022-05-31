@@ -37,9 +37,23 @@ class Post extends Model
 
   public static function queryFilter()
   {
+    $filter = request()->query('filter', null);
+
+    $tagsIds = isset($filter['tags']) ? explode(',', $filter['tags']) : null;
+
     return QueryBuilder::for(self::class)->allowedFilters([
       AllowedFilter::exact('id'),
+      AllowedFilter::exact('category', 'category_id'),
       AllowedFilter::partial('title'),
+      AllowedFilter::partial('description'),
+      AllowedFilter::callback(
+        'tags',
+        fn($query) => $query->whereHas('tags', function ($query) use (
+          $tagsIds
+        ) {
+          $query->whereIn('tags.id', $tagsIds);
+        })
+      ),
     ]);
   }
 

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -36,7 +37,7 @@ class UserPolicy
    */
   public function create(User $user)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin, UserRole::Editor]);
   }
 
   /**
@@ -46,7 +47,7 @@ class UserPolicy
    */
   public function update(User $user, User $model)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**
@@ -56,9 +57,7 @@ class UserPolicy
    */
   public function delete(User $user, User $model)
   {
-    //
-    return true;
-    //
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**

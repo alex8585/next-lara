@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -39,7 +40,7 @@ class TagPolicy
    */
   public function create(User $user)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin, UserRole::Editor]);
   }
 
   /**
@@ -49,7 +50,7 @@ class TagPolicy
    */
   public function update(User $user, Tag $tag)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**
@@ -59,7 +60,7 @@ class TagPolicy
    */
   public function delete(User $user, Tag $tag)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**

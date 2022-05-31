@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -39,6 +40,7 @@ class User extends Authenticatable implements JWTSubject
    */
   protected $casts = [
     'email_verified_at' => 'datetime',
+    'role' => UserRole::class,
   ];
 
   public function getJWTIdentifier()
@@ -56,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
     return QueryBuilder::for(self::class)->allowedFilters([
       AllowedFilter::exact('id'),
       AllowedFilter::partial('name'),
+      AllowedFilter::partial('email'),
     ]);
   }
 

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -41,7 +42,7 @@ class PostPolicy
    */
   public function create(User $user)
   {
-    return true;
+    return in_array($user->role, [UserRole::Admin, UserRole::Editor]);
   }
 
   /**
@@ -51,8 +52,7 @@ class PostPolicy
    */
   public function update(User $user, Post $post)
   {
-    return true;
-    //
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**
@@ -62,8 +62,7 @@ class PostPolicy
    */
   public function delete(User $user, Post $post)
   {
-    return true;
-    //
+    return in_array($user->role, [UserRole::Admin]);
   }
 
   /**
