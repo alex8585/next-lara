@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Database\Seeders\TagSeeder;
-use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Tag;
+use App\Models\User;
+use Database\Seeders\TagSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\TestCase;
 
 class TagTest extends TestCase
 {
@@ -15,20 +15,19 @@ class TagTest extends TestCase
 
   /**
    * A basic feature test example.
-   *
-   * @return void
    */
   public function test_tags_index_has_tags()
   {
     $this->seed(TagSeeder::class);
-    $response = $this->get('/api/v1/tags');
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get('/api/v1/tags');
 
     $response->assertStatus(200);
     /* $response->dump(); */
 
     $response->assertJson(
       fn(AssertableJson $json) => $json
-        ->hasAll('data', 'links', 'meta')
+        ->hasAll('data', 'metaData')
         ->etc()
         ->has('data', 5)
         ->has(
@@ -43,7 +42,8 @@ class TagTest extends TestCase
 
   public function test_create_tag()
   {
-    $response = $this->post('api/v1/tags', [
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->post('api/v1/tags', [
       'name' => 'tag1',
     ]);
 
@@ -63,7 +63,8 @@ class TagTest extends TestCase
     $this->seed(TagSeeder::class);
     $tagId = Tag::first()->id;
 
-    $response = $this->get("api/v1/tags/${tagId}");
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get("api/v1/tags/{$tagId}");
 
     /* $response->dump(); */
     $response->assertStatus(200);
@@ -80,7 +81,9 @@ class TagTest extends TestCase
     $tagId = Tag::first()->id;
 
     $tagName = 'test-tag-name';
-    $response = $this->post("api/v1/tags/${tagId}", [
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post("api/v1/tags/{$tagId}", [
       'name' => $tagName,
       '_method' => 'PUT',
     ]);
@@ -103,7 +106,8 @@ class TagTest extends TestCase
     $this->seed(TagSeeder::class);
     $tag = Tag::first();
 
-    $response = $this->delete("api/v1/tags/{$tag->id}");
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->delete("api/v1/tags/{$tag->id}");
 
     $response->assertStatus(200);
     $response->assertJson(

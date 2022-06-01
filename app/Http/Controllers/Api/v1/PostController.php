@@ -46,12 +46,16 @@ class PostController extends Controller
   {
     $validated = $request->safe();
 
-    $validated['category_id'] = $request->safe()->category['value'];
+    $validated['category_id'] = $request->safe()->category['value'] ?? null;
     $validated['user_id'] = 1;
 
-    $tagsIds = collect($request->safe()->tags)->pluck('value');
+    $tags = $request->safe()->tags ?? null;
     $post = Post::create($validated->all());
-    $post->tags()->sync($tagsIds);
+
+    if ($tags) {
+      $tagsIds = collect($tags)->pluck('value');
+      $post->tags()->sync($tagsIds);
+    }
 
     return response()->json([
       'message' => 'Post created successfully!',
@@ -80,14 +84,17 @@ class PostController extends Controller
   public function update(StorePostRequest $request, Post $post)
   {
     $validated = $request->safe()->merge([
-      'category_id' => $request->safe()->category['value'],
+      'category_id' => $request->safe()->category['value'] ?? null,
       'user_id' => 1,
     ]);
 
-    $tagsIds = collect($request->safe()->tags)->pluck('value');
-
+    $tags = $request->safe()->tags ?? null;
     $post->update($validated->all());
-    $post->tags()->sync($tagsIds);
+
+    if ($tags) {
+      $tagsIds = collect($tags)->pluck('value');
+      $post->tags()->sync($tagsIds);
+    }
 
     return response()->json([
       'message' => 'Post updated successfully!',

@@ -2,34 +2,33 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\Post;
-use App\Models\Tag;
-use Illuminate\Testing\Fluent\AssertableJson;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Database\Seeders\PostSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\TestCase;
+
 class PostTest extends TestCase
 {
   use RefreshDatabase;
 
   /**
    * A basic feature test example.
-   *
-   * @return void
    */
   public function test_posts_index_has_posts()
   {
     $this->seed(PostSeeder::class);
-    $response = $this->get('/api/v1/posts');
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/api/v1/posts');
 
     /* $response->dump(); */
     $response->assertStatus(200);
 
     $response->assertJson(
       fn(AssertableJson $json) => $json
-        ->hasAll('data', 'links', 'meta')
+        ->hasAll('data', 'metaData')
         ->etc()
         ->has('data', 5)
         ->has(
@@ -54,7 +53,8 @@ class PostTest extends TestCase
 
   public function test_create_post()
   {
-    $response = $this->post('api/v1/posts', [
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->post('api/v1/posts', [
       'title' => 'post-title',
       'description' => 'post-description',
       'user_id' => 1,
@@ -74,9 +74,11 @@ class PostTest extends TestCase
   public function test_show_post()
   {
     $this->seed(postSeeder::class);
+    $user = User::factory()->create();
+
     $postId = post::first()->id;
 
-    $response = $this->get("api/v1/posts/${postId}");
+    $response = $this->actingAs($user)->get("api/v1/posts/{$postId}");
 
     /* $response->dump(); */
     $response->assertStatus(200);
@@ -101,10 +103,12 @@ class PostTest extends TestCase
   public function test_update_post()
   {
     $this->seed(postSeeder::class);
+
     $postId = post::first()->id;
 
     $postTitle = 'test-post-title';
-    $response = $this->post("api/v1/posts/${postId}", [
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->post("api/v1/posts/{$postId}", [
       'title' => $postTitle,
       'description' => 'post-description',
       'user_id' => 1,
@@ -130,7 +134,8 @@ class PostTest extends TestCase
     $this->seed(postSeeder::class);
     $post = post::first();
 
-    $response = $this->delete("api/v1/posts/{$post->id}");
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->delete("api/v1/posts/{$post->id}");
 
     /* $response->dump(); */
     $response->assertStatus(200);

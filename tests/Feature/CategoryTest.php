@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use App\Models\User;
 use Database\Seeders\CategorySeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\TestCase;
 
 class CategoryTest extends TestCase
 {
@@ -15,20 +15,20 @@ class CategoryTest extends TestCase
 
   /**
    * A basic feature test example.
-   *
-   * @return void
    */
   public function test_categories_index_has_categories()
   {
-    $this->seed(CategorySeeder::class);
-    $response = $this->get('/api/v1/categories');
+    $this->seed([CategorySeeder::class]);
+
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get('/api/v1/categories');
 
     $response->assertStatus(200);
     /* $response->dump(); */
 
     $response->assertJson(
       fn(AssertableJson $json) => $json
-        ->hasAll('data', 'links', 'meta')
+        ->hasAll('data', 'metaData')
         ->etc()
         ->has('data', 5)
         ->has(
@@ -43,7 +43,8 @@ class CategoryTest extends TestCase
 
   public function test_create_category()
   {
-    $response = $this->post('api/v1/categories', [
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->post('api/v1/categories', [
       'name' => 'cat1',
     ]);
 
@@ -63,7 +64,8 @@ class CategoryTest extends TestCase
     $this->seed(CategorySeeder::class);
     $catId = Category::first()->id;
 
-    $response = $this->get("api/v1/categories/${catId}");
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get("api/v1/categories/{$catId}");
 
     /* $response->dump(); */
     $response->assertStatus(200);
@@ -80,7 +82,9 @@ class CategoryTest extends TestCase
     $catId = Category::first()->id;
 
     $catName = 'test-cat-name';
-    $response = $this->post("api/v1/categories/${catId}", [
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post("api/v1/categories/{$catId}", [
       'name' => $catName,
       '_method' => 'PUT',
     ]);
@@ -104,7 +108,8 @@ class CategoryTest extends TestCase
     $this->seed(CategorySeeder::class);
     $cat = Category::first();
 
-    $response = $this->delete("api/v1/categories/{$cat->id}");
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->delete("api/v1/categories/{$cat->id}");
 
     $response->assertStatus(200);
     $response->assertJson(

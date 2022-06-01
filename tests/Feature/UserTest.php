@@ -1,24 +1,25 @@
 <?php
 
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
-use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 beforeEach(fn() => $this->seed(UserSeeder::class));
 
 test('users index', function () {
-  $response = get('/api/v1/users');
+  $user = User::factory()->create();
+
+  $response = $this->actingAs($user)->get('/api/v1/users');
 
   $response->assertStatus(200);
   /* $response->dump(); */
 
   $response->assertJson(
     fn(AssertableJson $json) => $json
-      ->hasAll('data', 'links', 'meta')
+      ->hasAll('data', 'metaData')
       ->etc()
-      ->has('data', 1)
+      ->has('data', 2)
       ->has(
         'data.0',
         fn($json) => $json
@@ -26,6 +27,7 @@ test('users index', function () {
             'email',
             'name',
             'email_verified_at',
+            'role',
             'created_at',
             'updated_at'
           )
