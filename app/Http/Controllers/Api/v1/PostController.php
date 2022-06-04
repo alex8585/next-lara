@@ -25,10 +25,24 @@ class PostController extends Controller
   {
     $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
 
-    $query = Post::queryFilter()
-      ->with(['tags', 'category'])
-      ->sort()
-      ->paginate($perPage);
+    $filter = request()->query('filter', null);
+
+    $q = $filter['q'] ?? null;
+
+    if ($q) {
+      $query = Post::search($q)
+        ->query(function ($query) {
+          Post::queryFilter($query)
+            ->with(['tags', 'category'])
+            ->sort();
+        })
+        ->paginate($perPage);
+    } else {
+      $query = Post::queryFilter()
+        ->with(['tags', 'category'])
+        ->sort()
+        ->paginate($perPage);
+    }
 
     return new PostCollection($query);
 

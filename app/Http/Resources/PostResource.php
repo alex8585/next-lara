@@ -2,23 +2,20 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Carbon;
-/* use App\Support\TimeConverter; */
 use App\Facades\TimeConverter as Tc;
-use App\Models\Time;
+/* use App\Support\TimeConverter; */
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
 {
   /**
    * Transform the resource into an array.
    *
-   * @param  \Illuminate\Http\Request  $request
-   * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+   * @param \Illuminate\Http\Request $request
    *
+   * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
    */
-
-  public static $wrap = null;
+  public static $wrap;
 
   public function toArray($request)
   {
@@ -40,6 +37,7 @@ class PostResource extends JsonResource
       'category' => new CategoryResource($this->category),
     ];
   }
+
   public function withResponse($request, $response)
   {
     $response->header('X-Value', '11111');

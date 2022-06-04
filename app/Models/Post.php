@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
+use Laravel\Scout\Searchable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -12,6 +13,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class Post extends Model
 {
+  use Searchable;
   use HasFactory;
   use Prunable;
   protected $guarded = ['tags', 'category'];
@@ -22,6 +24,20 @@ class Post extends Model
     'created_at' => Timestamp::class,
     'updated_at' => Timestamp::class . ':Y-m-d h:i:s',
   ];
+
+  // public function searchableAs()
+  // {
+  //   return 'posts_index';
+  // }
+  //
+  //
+  public function toSearchableArray(): array
+  {
+    return [
+      'description' => $this->description,
+      'title' => $this->title,
+    ];
+  }
 
   public function category()
   {
@@ -35,13 +51,13 @@ class Post extends Model
     return $this->belongsToMany(Tag::class)->withTimestamps();
   }
 
-  public static function queryFilter()
+  public static function queryFilter($query = self::class)
   {
     $filter = request()->query('filter', null);
 
     $tagsIds = isset($filter['tags']) ? explode(',', $filter['tags']) : null;
 
-    return QueryBuilder::for(self::class)->allowedFilters([
+    return QueryBuilder::for($query)->allowedFilters([
       AllowedFilter::exact('id'),
       AllowedFilter::exact('category', 'category_id'),
       AllowedFilter::partial('title'),
