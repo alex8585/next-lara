@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
 */
 
 Route::get('/', function () {
-  FrontendMessage::dispatch(['text' => 'msg4']);
+  FrontendMessage::dispatch(['text' => 'msg5']);
 
   /* $query = Post::search('VERY deeply')->raw(); */
 
