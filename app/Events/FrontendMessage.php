@@ -4,28 +4,34 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderShipped
+class FrontendMessage implements ShouldBroadcast
 {
-  use Dispatchable, InteractsWithSockets, SerializesModels;
+  use Dispatchable;
+  use InteractsWithSockets;
+  use SerializesModels;
 
-  public $order;
+  public $msg;
+
   /**
    * Create a new event instance.
    *
-   * @return void
+   * @param mixed $order
+   * @param mixed $msg
    */
-  public function __construct($order)
+  public function __construct($msg)
   {
-    $this->order = $order;
+    $this->msg = $msg;
   }
 
-  /**
+  public function broadcastOn()
+  {
+    return new Channel('message.dashboard');
+  }
+  /*
    * Get the channels the event should broadcast on.
    *
    * @return \Illuminate\Broadcasting\Channel|array

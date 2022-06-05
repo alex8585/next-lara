@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\FrontendMessage;
+use App\Listeners\SendFrontendMessage;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use App\Events\OrderShipped;
-use App\Listeners\SendShipment;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,13 +18,11 @@ class EventServiceProvider extends ServiceProvider
    */
   protected $listen = [
     Registered::class => [SendEmailVerificationNotification::class],
-    OrderShipped::class => [SendShipment::class],
+    FrontendMessage::class => [SendFrontendMessage::class],
   ];
 
   /**
    * Register any events for your application.
-   *
-   * @return void
    */
   public function boot()
   {

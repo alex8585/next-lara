@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Casts\Timestamp;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -25,18 +27,21 @@ class Post extends Model
     'updated_at' => Timestamp::class . ':Y-m-d h:i:s',
   ];
 
-  // public function searchableAs()
-  // {
-  //   return 'posts_index';
-  // }
-  //
-  //
+  // #[SearchUsingPrefix(['title', 'description'])]
+  //  #[SearchUsingFullText(['title', 'description'])]
   public function toSearchableArray(): array
   {
     return [
       'description' => $this->description,
       'title' => $this->title,
+      'category' => $this->category->name,
+      'tags' => $this->tags->makeHidden('pivot'),
     ];
+  }
+
+  public function searchableAs()
+  {
+    return 'posts_index';
   }
 
   public function category()
@@ -76,5 +81,15 @@ class Post extends Model
   public function prunable()
   {
     return static::where('created_at', '<=', now()->subDays(3));
+  }
+
+  protected function makeAllSearchableUsing($query)
+  {
+    return $query->with([
+      'category',
+      'tags' => function ($q) {
+        $q->select(['tags.id', 'tags.name']);
+      },
+    ]);
   }
 }

@@ -1,8 +1,9 @@
 <?php
 
-use App\Events\OrderShipped;
-use App\Jobs\ProcessPodcast;
+use App\Events\FrontendMessage;
 /* use App\Mail\OrderShipped; */
+use App\Http\Resources\PostCollection;
+use App\Jobs\ProcessPodcast;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Cookie;
@@ -23,9 +24,14 @@ use Illuminate\Support\Str;
 */
 
 Route::get('/', function () {
-  $s = Post::search("Come on!'.")->get();
-  dd($s);
-  /* OrderShipped::dispatch('2222'); */
+  FrontendMessage::dispatch(['text' => 'msg4']);
+
+  /* $query = Post::search('VERY deeply')->raw(); */
+
+  /* return response()->json([ */
+  /*   'posts' => $query, */
+  /* ]); */
+  /* return new PostCollection($query); */
   /* User::factory()->create(); */
   /* dump(Cookie::get()); */
   /* dump(csrf_token()); */
