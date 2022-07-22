@@ -139,6 +139,7 @@ return [
     */
 
   'providers' => [
+      /* Dimsav\Translatable\TranslatableServiceProvider::class, */
     Barryvdh\Debugbar\ServiceProvider::class,
     /*
      * Laravel Framework Service Providers...

@@ -4,6 +4,7 @@ use App\Events\FrontendMessage;
 /* use App\Mail\OrderShipped; */
 use App\Http\Resources\PostCollection;
 use App\Jobs\ProcessPodcast;
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Cookie;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Laravel\Octane\Facades\Octane;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +24,37 @@ use Illuminate\Support\Str;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::group(['prefix' => LaravelLocalization::setLocale()], function()
+{
+	/** ADD ALL LOCALIZED ROUTES INSIDE THIS GROUP **/
+	Route::get('/', function()
+	{
+            echo '1111';
+	});
+
+	Route::get('test',function(){
+            echo '2222';
+	});
+});
 
 Route::get('/', function () {
-  FrontendMessage::dispatch(['text' => 'msg5']);
+    /* $perPage = min(100, (int) request()->get('perPage', 5)); */
+
+    /* $query = Category::queryFilter()->sort(); */
+
+    /* if ($perPage > -1) { */
+        /* return $query->paginate($perPage); */
+    /* } */
+
+    /* return $query->get(); */
+
+    /* dump('1111'); */
+    /* Octane::table('example')->set('uuid', [ */
+    /*   'name' => 'Nuno Maduro', */
+    /*   'votes' => 1000, */
+    /* ]); */
+    /* return 222; */
+    /* FrontendMessage::dispatch(['text' => 'msg5']); */
 
   /* $query = Post::search('VERY deeply')->raw(); */
 
@@ -69,4 +99,4 @@ Route::get('/', function () {
   /* echo asset('storage/example1.txt'); */
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

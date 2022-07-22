@@ -20,7 +20,7 @@ class Post extends Model
   use Prunable;
   protected $guarded = ['tags', 'category'];
   /* use HasTags; */
-  protected $sortFields = ['id', 'title'];
+  protected $sortFields = ['id', 'title','description'];
 
   protected $casts = [
     'created_at' => Timestamp::class,

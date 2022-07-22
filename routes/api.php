@@ -35,11 +35,20 @@ Route::prefix('v1/auth')->group(function () {
   });
 });
 
-Route::prefix('v1')->group(function () {
-  Route::middleware(['api', 'auth:api'])->group(function () {
-    Route::apiResource('posts', PostController::class);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('tags', TagController::class);
-    Route::apiResource('users', UserController::class);
-  });
+Route::prefix('v1')->group(function() {
+
+  Route::prefix((function() {
+        $locale = request()->segment(3); 
+        return LaravelLocalization::setLocale($locale);
+    })())->group(function() {
+        
+        //'auth:api'
+        Route::middleware(['ApiLocaleCookieRedirect','api', ])->group(function () {
+            Route::apiResource('posts', PostController::class);
+            Route::apiResource('categories', CategoryController::class);
+            Route::apiResource('tags', TagController::class);
+            Route::apiResource('users', UserController::class);
+        });
+    });
+
 });

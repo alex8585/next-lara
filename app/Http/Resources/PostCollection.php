@@ -17,23 +17,39 @@ class PostCollection extends ResourceCollection
    */
   public function toArray($request)
   {
-    $post = new Post();
 
+    ob_start();
+    $test  =__('common.test');
+    ob_end_clean();
+
+    $post = new Post();
+    $user = Auth::user();
+    $can_create = $can_update = $can_delete = false;
+    if($user) { 
+        $can_create = $user->can('create', Post::class);
+        $can_update = $user->can('update', $post);
+        $can_delete = $user->can('delete', $post);
+    }
     return [
       'data' => $this->collection,
       'metaData' => [
+        'test'=> $test,
+        'locale' => app()->currentLocale(),
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
-        'can_create' => Auth::user()->can('create', Post::class),
-        'can_update' => Auth::user()->can('update', $post),
-        'can_delete' => Auth::user()->can('delete', $post),
+        'can_create' => $can_create, 
+        'can_update' => $can_update,
+        'can_delete' => $can_delete,
       ],
     ];
   }
 
   public function withResponse($request, $response)
   {
+    $response->header('X-Value', '11111');
+    $response->header('Content-Type', 'application/json');
+
     $jsonResponse = json_decode($response->getContent(), true);
     unset($jsonResponse['links'], $jsonResponse['meta']);
     $response->setContent(json_encode($jsonResponse));

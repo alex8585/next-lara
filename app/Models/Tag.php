@@ -5,10 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 class Tag extends Model
+
 {
-  use HasFactory;
+  use HasFactory ;
+
+  use Translatable;
+
+  public $translatedAttributes = ['name'];
 
   protected $sortFields = ['id', 'name'];
 

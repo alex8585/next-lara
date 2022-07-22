@@ -19,15 +19,23 @@ class TagCollection extends ResourceCollection
   {
     $tag = new Tag();
 
+    $user = Auth::user();
+    $can_create = $can_update = $can_delete = false;
+    if($user) { 
+        $can_create = $user->can('create', Post::class);
+        $can_update = $user->can('update', $post);
+        $can_delete = $user->can('delete', $post);
+    }
     return [
       'data' => $this->collection,
       'metaData' => [
+        'locale' => app()->currentLocale(),
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
-        'can_create' => Auth::user()->can('create', Tag::class),
-        'can_update' => Auth::user()->can('update', $tag),
-        'can_delete' => Auth::user()->can('delete', $tag),
+        'can_create' => $can_create,
+        'can_update' =>$can_update,
+        'can_delete' =>$can_delete,
       ],
     ];
 

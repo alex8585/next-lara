@@ -1,7 +1,9 @@
 <?php
 
 $rules = [
-    '@PhpCsFixer' => true,
+    /* '@Symfony' => true, */
+     '@PSR2' => true,
+    /* '@PhpCsFixer' => true, */
     'no_empty_comment' => false,
     'no_extra_blank_lines' => [
         'tokens' => [

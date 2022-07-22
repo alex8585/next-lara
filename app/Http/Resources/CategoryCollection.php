@@ -19,15 +19,23 @@ class CategoryCollection extends ResourceCollection
   {
     $cat = new Category();
 
+    $user = Auth::user();
+    $can_create = $can_update = $can_delete = false;
+    if($user) { 
+        $can_create = $user->can('create', Post::class);
+        $can_update = $user->can('update', $post);
+        $can_delete = $user->can('delete', $post);
+    }
     return [
       'data' => $this->collection,
       'metaData' => [
+        'locale' => app()->currentLocale(),
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),
-        'can_create' => Auth::user()->can('create', Category::class),
-        'can_update' => Auth::user()->can('update', $cat),
-        'can_delete' => Auth::user()->can('delete', $cat),
+        'can_create' =>$can_create,
+        'can_update' =>$can_update,
+        'can_delete' =>$can_delete,
       ],
     ];
   }

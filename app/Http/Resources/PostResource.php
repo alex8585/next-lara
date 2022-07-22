@@ -37,9 +37,4 @@ class PostResource extends JsonResource
       'category' => new CategoryResource($this->category),
     ];
   }
-
-  public function withResponse($request, $response)
-  {
-    $response->header('X-Value', '11111');
-  }
 }
