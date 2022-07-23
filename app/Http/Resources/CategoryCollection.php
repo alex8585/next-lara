@@ -22,9 +22,9 @@ class CategoryCollection extends ResourceCollection
     $user = Auth::user();
     $can_create = $can_update = $can_delete = false;
     if($user) { 
-        $can_create = $user->can('create', Post::class);
-        $can_update = $user->can('update', $post);
-        $can_delete = $user->can('delete', $post);
+        $can_create = $user->can('create', Category::class);
+        $can_update = $user->can('update', $cat);
+        $can_delete = $user->can('delete', $cat);
     }
     return [
       'data' => $this->collection,

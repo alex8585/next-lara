@@ -7,11 +7,15 @@ use App\Http\Requests\StoreTagRequest;
 use App\Http\Resources\TagCollection;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
+use App\Traits\LocalesTrait;
 
 class TagController extends Controller
 {
+    use LocalesTrait;
+
     public function __construct()
     {
+
         /* $this->authorizeResource(Tag::class, 'tag'); */
     }
 
@@ -24,7 +28,7 @@ class TagController extends Controller
     {
         $perPage = min(100, (int) request()->get('perPage', 5));
 
-        $query = Tag::queryFilter()->sort();
+        $query = Tag::queryFilter()->with('translations')->sort();
 
         if ($perPage > -1) {
             $query = $query->paginate($perPage);
@@ -44,8 +48,8 @@ class TagController extends Controller
      */
     public function store(StoreTagRequest $request)
     {
-        $tag = Tag::create($request->validated());
-
+        $data = $this->formatLocalesFields($request->validated());
+        $tag = Tag::create($data);
         return response()->json([
             'message' => 'Tag created successfully!',
             'id' => $tag->id,
@@ -73,7 +77,8 @@ class TagController extends Controller
      */
     public function update(StoreTagRequest $request, Tag $tag)
     {
-        $tag->update($request->validated());
+        $data = $this->formatLocalesFields($request->validated());
+        $tag->update($data);
 
         return response()->json([
             'message' => 'Tag updated successfully!',

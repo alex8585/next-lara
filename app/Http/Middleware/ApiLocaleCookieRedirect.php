@@ -62,7 +62,7 @@ class ApiLocaleCookieRedirect extends LaravelLocalizationMiddlewareBase
             $prefix =$request->route()->getPrefix() ;
             $newPrefix = $prefix . '/' . $locale;
             $redirection =  str_replace($prefix, $newPrefix, $request->url());
-
+            $redirection .= '?' . http_build_query($request->query());
             $redirectResponse = new RedirectResponse($redirection, 302, ['Vary' => 'Accept-Language']);
 
             return $redirectResponse->withCookie(cookie()->forever('locale', $locale));
