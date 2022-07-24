@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use App\Facades\TransHelp;
 class StoreTagRequest extends FormRequest
 {
   /**
@@ -23,10 +23,10 @@ class StoreTagRequest extends FormRequest
    */
   public function rules()
   {
-    return [
-      'en_name' => 'required|max:50',
-      'ru_name' => 'required|max:50',
-      'uk_name' => 'required|max:50',
+    $fields =[
+      'name' => 'required|max:50',
     ];
+    $validatorData = TransHelp::getValidatorFields($fields);
+    return $validatorData;  
   }
 }

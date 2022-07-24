@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 
 use App\Support\TimeConverter;
+use App\Support\TransHelp;
 class AppServiceProvider extends ServiceProvider
 {
   /**
@@ -17,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(TimeConverter::class, function ($app) {
       return new TimeConverter();
     });
+    $this->app->bind(TransHelp::class, function ($app) {
+      return new TransHelp();
+    });
+
     //
   }
 
