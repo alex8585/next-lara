@@ -1,8 +1,9 @@
 <?php
 namespace App\Facades;
 
-use Barryvdh\Debugbar\Facade;
+use Illuminate\Support\Facades\Facade;
 use App\Support\TransHelp as Th;
+
 class TransHelp extends Facade
 {
   /**

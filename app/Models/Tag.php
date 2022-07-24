@@ -8,6 +8,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use App\Models\Model as Model;
+use Illuminate\Support\Facades\DB;
+use App\Facades\TransHelp;
 
 class Tag extends Model
 
@@ -18,7 +20,7 @@ class Tag extends Model
 
   public $translatedAttributes = ['name'];
 
-  protected $sortFields = ['id', 'name'];
+  protected $sortFields = ['id'];
 
   public function posts()
   {
@@ -32,4 +34,23 @@ class Tag extends Model
       AllowedFilter::partial('name'),
     ]);
   }
+
+  public function scopeSort($query)
+  {
+    parent::scopeSort($query);
+
+    $direction = request()->boolean('descending', true) ? 'ASC' : 'DESC';
+    $order = request()->get('orderBy', 'id');
+
+    if($order == 'name') {
+        $query->join('tag_translations', function($join) {
+          $loc = app()->getLocale();
+          $join->on('tags.id',  'tag_translations.tag_id');
+          $join->on('locale',  DB::raw("'${loc}'"));
+        });
+        $query->select('tags.*','tag_translations.name as t_name');
+        $query->orderBy('t_name', $direction);
+    }
+  }
+
 }
