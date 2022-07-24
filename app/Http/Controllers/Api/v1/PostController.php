@@ -9,9 +9,11 @@ use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
 use Symfony\Component\HttpFoundation\Response;
-use   Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Traits\LocalesTrait;
+
 class PostController extends Controller
 {
+    use LocalesTrait;
     /**
      * Display a listing of the resource.
      *
@@ -24,8 +26,6 @@ class PostController extends Controller
 
     public function index()
     {
-        /* dd(LaravelLocalization::getSupportedLocales() ); */
-        /* dd(response()); */
         $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
 
         $filter = request()->query('filter', null);

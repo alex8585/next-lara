@@ -12,9 +12,9 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('tags', function (Blueprint $table) {
-            $table->dropColumn('name');
+        Schema::table('categories', function (Blueprint $table) {
             //
+            $table->dropColumn('name');
         });
     }
 
@@ -25,9 +25,9 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::table('tags', function (Blueprint $table) {
-            $table->string('name');
+        Schema::table('categories', function (Blueprint $table) {
             //
+            $table->string('name');
         });
     }
 };

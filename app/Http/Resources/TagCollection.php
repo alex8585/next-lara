@@ -5,8 +5,8 @@ namespace App\Http\Resources;
 use App\Models\Tag;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Astrotomic\Translatable\Locales;
+
+use App\Facades\TransHelp;
 
 class TagCollection extends ResourceCollection
 {
@@ -28,14 +28,10 @@ class TagCollection extends ResourceCollection
         $can_update = $user->can('update', $tag);
         $can_delete = $user->can('delete', $tag);
     }
-
-    $locales = app()->make('Astrotomic\Translatable\Locales')->all();
-    /* $locales =     array_keys(LaravelLocalization::getSupportedLocales()) ; */ 
-
     return [
       'data' => $this->collection,
       'metaData' => [
-        'locales'=> $locales,
+        'locales'=> TransHelp::getLocales(),
         'locale' => app()->currentLocale(),
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),

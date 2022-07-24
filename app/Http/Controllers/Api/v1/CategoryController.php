@@ -7,9 +7,12 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Traits\LocalesTrait;
 
 class CategoryController extends Controller
 {
+    use LocalesTrait;
+
     public function __construct()
     {
         /* $this->authorizeResource(Category::class, 'category'); */
@@ -44,7 +47,8 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $data = $this->formatLocalesFields($request->validated());
+        $category = Category::create($data);
 
         return response()->json([
             'message' => 'Category created successfully!',
@@ -72,7 +76,8 @@ class CategoryController extends Controller
      */
     public function update(StoreCategoryRequest $request, Category $category)
     {
-        $category->update($request->validated());
+        $data = $this->formatLocalesFields($request->validated());
+        $category->update($data);
 
         return response()->json([
             'message' => 'Category updated successfully!',
