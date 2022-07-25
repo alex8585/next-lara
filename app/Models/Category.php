@@ -28,7 +28,14 @@ class Category extends Model
   {
     return QueryBuilder::for(self::class)->allowedFilters([
       AllowedFilter::exact('id'),
-      AllowedFilter::partial('name'),
+      AllowedFilter::callback(
+        'name',
+        fn($query,$name) => $query->whereHas('translations', function ($query) use ($name) {
+          $query->where('locale', app()->getLocale());
+          $query->where('name', 'LIKE', "%{$name}%");
+          /* $query->where(DB::raw('LOWER(category_translations.name)') , 'LIKE', '%' . strtolower($name) . '%'); */
+        })
+      ),
     ]);
   }
 

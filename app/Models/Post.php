@@ -13,6 +13,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 use Illuminate\Support\Facades\DB;
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Builder;
+
 /* use Spatie\Tags\HasTags; */
 
 class Post extends Model
@@ -65,20 +67,31 @@ class Post extends Model
   public static function queryFilter($query = self::class)
   {
     $filter = request()->query('filter', null);
-
     $tagsIds = isset($filter['tags']) ? explode(',', $filter['tags']) : null;
 
     return QueryBuilder::for($query)->allowedFilters([
       AllowedFilter::exact('id'),
       AllowedFilter::exact('category', 'category_id'),
-      AllowedFilter::partial('title'),
-      AllowedFilter::partial('description'),
       AllowedFilter::callback(
         'tags',
         fn($query) => $query->whereHas('tags', function ($query) use (
           $tagsIds
         ) {
           $query->whereIn('tags.id', $tagsIds);
+        })
+      ),
+      AllowedFilter::callback(
+        'title',
+        fn($query, $title) => $query->whereHas('translations', function ($query ) use($title)  {
+          $query->where('locale', app()->getLocale());
+          $query->where('title', 'LIKE', "%{$title}%");
+        })
+      ),
+      AllowedFilter::callback(
+        'description',
+        fn($query, $description) => $query->whereHas('translations', function ($query ) use($description)  {
+          $query->where('locale', app()->getLocale());
+          $query->where('description', 'LIKE', "%{$description}%");
         })
       ),
     ]);
@@ -98,6 +111,9 @@ class Post extends Model
       },
     ]);
   }
+  /* public function scopeWithTranslation(Builder $query) { */
+
+  /* } */
 
   public function scopeSort($query)
   {

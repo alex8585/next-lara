@@ -27,7 +27,7 @@ class CategoryController extends Controller
     {
         $perPage = min(100, (int) request()->get('perPage', 5));
 
-        $query = Category::queryFilter()->sort();
+        $query = Category::queryFilter()->with('translations')->sort();
 
         if ($perPage > -1) {
             $query = $query->paginate($perPage);

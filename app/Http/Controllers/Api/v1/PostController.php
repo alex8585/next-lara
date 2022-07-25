@@ -11,6 +11,9 @@ use App\Models\Post;
 use Symfony\Component\HttpFoundation\Response;
 use App\Traits\LocalesTrait;
 
+/* use Illuminate\Database\Eloquent\Builder; */
+use Laravel\Scout\Builder;
+
 class PostController extends Controller
 {
     use LocalesTrait;
@@ -32,23 +35,31 @@ class PostController extends Controller
 
         $q = $filter['q'] ?? null;
 
-        if ($q) {
-            $query = Post::search($q)
-            ->query(function ($query) {
-                Post::queryFilter($query)
-                ->with(['tags', 'category'])
-                ->sort();
-            })->paginate($perPage);
-        } else {
-            $query = Post::queryFilter()
-            ->with(['tags', 'category'])
-            ->sort()
-            ->paginate($perPage);
+        $postsQuery = Post::queryFilter()
+            ->with('translations')
+            ->with(['tags'=> function($q){
+                $q->with('translation');
+            }])
+            ->with(['category'=> function($q){
+                $q->with('translation');
+            }])->sort();
+
+        if($q) {
+            $hits = Post::search($q)->raw()['hits'];
+            $postsIds = array_column($hits,'id');
+            $postsQuery->whereIn('id',$postsIds);
         }
+        /* if ($q) { */
+        /*     $searchQuery = Post::search($q)->query(function ($query) use ($baseQuery) { */
+        /*         $eager = $baseQuery->getEagerLoads(); */
+        /*         Post::queryFilter($query)->setEagerLoads($eager)->sort(); */
+        /*     }); */
+        /*     $postsQuery = $searchQuery->paginate($perPage); */
+        /* } else { */
+        /*     $postsQuery = $baseQuery->paginate($perPage); */
+        /* } */
 
-        return new PostCollection($query);
-
-        /* return new PostCollection(Post::with(['tags', 'category'])->paginate(5)); */
+        return new PostCollection($postsQuery->paginate($perPage));
     }
 
     /**
