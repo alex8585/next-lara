@@ -66,7 +66,9 @@ class PostController extends Controller
         $validated['user_id'] = 1;
 
         $tags = $request->safe()->tags ?? null;
-        $post = Post::create($validated->all());
+
+        $data = $this->formatLocalesFields($validated);
+        $post = Post::create($data);
 
         if ($tags) {
             if (isset($tags[0]['value'])) {
@@ -78,9 +80,9 @@ class PostController extends Controller
         }
 
         return response()->json([
-      'message' => 'Post created successfully!',
-      'id' => $post->id,
-    ]);
+          'message' => 'Post created successfully!',
+          'id' => $post->id,
+        ]);
     }
 
     /**
@@ -104,12 +106,14 @@ class PostController extends Controller
     public function update(StorePostRequest $request, Post $post)
     {
         $validated = $request->safe()->merge([
-      'category_id' => $request->safe()->category['value'] ?? null,
-      'user_id' => 1,
-    ]);
+          'category_id' => $request->safe()->category['value'] ?? null,
+          'user_id' => 1,
+         ]);
 
         $tags = $request->safe()->tags ?? null;
-        $post->update($validated->all());
+
+        $data = $this->formatLocalesFields($validated);
+        $post->update($data);
 
         if ($tags) {
             if (isset($tags[0]['value'])) {
@@ -121,9 +125,9 @@ class PostController extends Controller
         }
 
         return response()->json([
-      'message' => 'Post updated successfully!',
-      'id' => $post->id,
-    ]);
+          'message' => 'Post updated successfully!',
+          'id' => $post->id,
+        ]);
     }
 
     /**

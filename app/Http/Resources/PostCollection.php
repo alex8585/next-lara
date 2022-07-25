@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
+use App\Facades\TransHelp;
 class PostCollection extends ResourceCollection
 {
   /**
@@ -18,9 +19,9 @@ class PostCollection extends ResourceCollection
   public function toArray($request)
   {
 
-    ob_start();
-    $test  =__('common.test');
-    ob_end_clean();
+    /* ob_start(); */
+    /* $test  =__('common.test'); */
+    /* ob_end_clean(); */
 
     $post = new Post();
     $user = Auth::user();
@@ -33,8 +34,8 @@ class PostCollection extends ResourceCollection
     return [
       'data' => $this->collection,
       'metaData' => [
-        'test'=> $test,
         'locale' => app()->currentLocale(),
+        'locales'=> TransHelp::getLocales(),
         'rowsNumber' => $this->total(),
         'rowsPerPage' => $this->perPage(),
         'page' => $this->currentPage(),

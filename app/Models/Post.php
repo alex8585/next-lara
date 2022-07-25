@@ -11,6 +11,8 @@ use Laravel\Scout\Searchable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
+use Illuminate\Support\Facades\DB;
+use Astrotomic\Translatable\Translatable;
 /* use Spatie\Tags\HasTags; */
 
 class Post extends Model
@@ -18,6 +20,10 @@ class Post extends Model
   use Searchable;
   use HasFactory;
   use Prunable;
+  use Translatable;
+
+  public $translatedAttributes = ['title','description'];
+
   protected $guarded = ['tags', 'category'];
   /* use HasTags; */
   protected $sortFields = ['id', 'title','description'];
@@ -91,5 +97,23 @@ class Post extends Model
         $q->select(['tags.id', 'tags.name']);
       },
     ]);
+  }
+
+  public function scopeSort($query)
+  {
+    parent::scopeSort($query);
+
+    $direction = request()->boolean('descending', true) ? 'ASC' : 'DESC';
+    $order = request()->get('orderBy', 'id');
+
+    if($order == 'title') {
+        $query->join('post_translations', function($join) {
+          $loc = app()->getLocale();
+          $join->on('posts.id',  'post_translations.post_id');
+          $join->on('locale',  DB::raw("'${loc}'"));
+        });
+        $query->select('posts.*','post_translations.title as t_title');
+        $query->orderBy('t_title', $direction);
+    }
   }
 }

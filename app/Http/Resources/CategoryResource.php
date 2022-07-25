@@ -16,9 +16,16 @@ class CategoryResource extends JsonResource
 
     public function toArray($request)
     {
-        return [
-          'id' => $this->id,
-          'tr'=>$this->getTranslationsArray(),
-        ];
+        $params = explode('/', $request->path());
+
+        $returnArray = ['id' => $this->id];
+        
+        if (isset($params[3]) && $params[3] == 'categories') {
+            $returnArray['tr'] = $this->getTranslationsArray();
+        } else {
+            $returnArray['name'] = $this->name;
+        }
+
+        return $returnArray;
     }
 }
