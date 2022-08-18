@@ -13,38 +13,38 @@ use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
 {
-  use DatabaseMigrations;
+    use DatabaseMigrations;
 
-  /**
-   * A Dusk test example.
-   */
-  public function testUserLogin()
-  {
-    $this->seed(UserSeeder::class);
+    /**
+     * A Dusk test example.
+     */
+    public function testUserLogin()
+    {
+        $this->seed(UserSeeder::class);
 
-    $this->browse(function (Browser $browser) {
-      //  $user = User::factory()->create();
+        $this->browse(function (Browser $browser) {
+            //  $user = User::factory()->create();
 
-      /* dump($user); */
-      $browser->visit('/login')->assertSee('Login');
-      $browser
-        ->type('[type=email]', 'blyakher85@gmail.com')
-        ->type('[type=password]', 'password')
-        ->press('.q-btn__content');
-      $browser->pause(4000);
-    });
-  }
+            /* dump($user); */
+            $browser->visit('/login')->assertSee('Login');
+            $browser
+              ->type('[type=email]', 'blyakher85@gmail.com')
+              ->type('[type=password]', 'password')
+              ->press('.q-btn__content');
+            $browser->pause(4000);
+        });
+    }
 
-  protected function driver()
-  {
-    $options = (new ChromeOptions())->addArguments(['--disable-gpu']);
+    protected function driver()
+    {
+        $options = (new ChromeOptions())->addArguments(['--disable-gpu']);
 
-    return RemoteWebDriver::create(
-      'http://localhost:9515',
-      DesiredCapabilities::chrome()->setCapability(
-        ChromeOptions::CAPABILITY,
-        $options
-      )
-    );
-  }
+        return RemoteWebDriver::create(
+            'http://localhost:9515',
+            DesiredCapabilities::chrome()->setCapability(
+                ChromeOptions::CAPABILITY,
+                $options
+            )
+        );
+    }
 }

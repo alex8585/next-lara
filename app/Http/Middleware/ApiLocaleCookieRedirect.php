@@ -10,7 +10,6 @@ use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationMiddlewareBase;
 
 class ApiLocaleCookieRedirect extends LaravelLocalizationMiddlewareBase
 {
-
     /**
      * Handle an incoming request.
      *
@@ -34,7 +33,6 @@ class ApiLocaleCookieRedirect extends LaravelLocalizationMiddlewareBase
         }
 
         if (empty($locale) && app('laravellocalization')->hideUrlAndAcceptHeader()) {
-
             // When default locale is hidden and accept language header is true,
             // then compute browser language when no session has been set.
             // Once the session has been set, there is no need
@@ -57,7 +55,6 @@ class ApiLocaleCookieRedirect extends LaravelLocalizationMiddlewareBase
             app('laravellocalization')->checkLocaleInSupportedLocales($locale) &&
             ! (app('laravellocalization')->isHiddenDefault($locale))
         ) {
-
             /* $redirection = app('laravellocalization')->getLocalizedURL($locale); */
             $prefix =$request->route()->getPrefix() ;
             $newPrefix = $prefix . '/' . $locale;

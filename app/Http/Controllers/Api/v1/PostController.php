@@ -9,21 +9,22 @@ use App\Http\Resources\PostResource;
 use App\Models\Category;
 use App\Models\Post;
 use Symfony\Component\HttpFoundation\Response;
-use App\Traits\LocalesTrait;
-
+use App\Repositories\PostRepository;
 /* use Illuminate\Database\Eloquent\Builder; */
 use Laravel\Scout\Builder;
 
 class PostController extends Controller
 {
-    use LocalesTrait;
+    private $postRepo;
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct()
+    public function __construct(PostRepository $postRepo)
     {
+        $this->postRepo = $postRepo;
         /* $this->authorizeResource(Post::class, 'post'); */
     }
 
@@ -35,31 +36,11 @@ class PostController extends Controller
 
         $q = $filter['q'] ?? null;
 
-        $postsQuery = Post::queryFilter()
-            ->with('translations')
-            ->with(['tags'=> function($q){
-                $q->with('translation');
-            }])
-            ->with(['category'=> function($q){
-                $q->with('translation');
-            }])->sort();
-
-        if($q) {
-            $hits = Post::search($q)->raw()['hits'];
-            $postsIds = array_column($hits,'id');
-            $postsQuery->whereIn('id',$postsIds);
+        if ($q) {
+            return  $this->postRepo->search($q, $perPage);
         }
-        /* if ($q) { */
-        /*     $searchQuery = Post::search($q)->query(function ($query) use ($baseQuery) { */
-        /*         $eager = $baseQuery->getEagerLoads(); */
-        /*         Post::queryFilter($query)->setEagerLoads($eager)->sort(); */
-        /*     }); */
-        /*     $postsQuery = $searchQuery->paginate($perPage); */
-        /* } else { */
-        /*     $postsQuery = $baseQuery->paginate($perPage); */
-        /* } */
 
-        return new PostCollection($postsQuery->paginate($perPage));
+        return  $this->postRepo->paginate($perPage);
     }
 
     /**
@@ -72,23 +53,11 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $validated = $request->safe();
-
         $validated['category_id'] = $request->safe()->category['value'] ?? null;
         $validated['user_id'] = 1;
-
-        $tags = $request->safe()->tags ?? null;
-
-        $data = $this->formatLocalesFields($validated);
-        $post = Post::create($data);
-
-        if ($tags) {
-            if (isset($tags[0]['value'])) {
-                $tagsIds = collect($tags)->pluck('value');
-            } else {
-                $tagsIds = collect($tags);
-            }
-            $post->tags()->sync($tagsIds);
-        }
+        $tags = $request->safe()->tags ?? [];
+        
+        $post = $this->postRepo->create($validated->all(), $tags);
 
         return response()->json([
           'message' => 'Post created successfully!',
@@ -119,21 +88,11 @@ class PostController extends Controller
         $validated = $request->safe()->merge([
           'category_id' => $request->safe()->category['value'] ?? null,
           'user_id' => 1,
-         ]);
+        ]);
 
         $tags = $request->safe()->tags ?? null;
 
-        $data = $this->formatLocalesFields($validated);
-        $post->update($data);
-
-        if ($tags) {
-            if (isset($tags[0]['value'])) {
-                $tagsIds = collect($tags)->pluck('value');
-            } else {
-                $tagsIds = collect($tags);
-            }
-            $post->tags()->sync($tagsIds);
-        }
+        $this->postRepo->update($post, $validated->all(), $tags);
 
         return response()->json([
           'message' => 'Post updated successfully!',
@@ -148,11 +107,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
+        $this->postRepo->delete($post);
 
         return response()->json([
-      'message' => 'Post deleted successfully!',
-      'id' => $post->id,
-    ]);
+            'message' => 'Post deleted successfully!',
+            'id' => $post->id,
+        ]);
     }
 }

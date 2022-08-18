@@ -7,15 +7,15 @@ use App\Http\Requests\StoreTagRequest;
 use App\Http\Resources\TagCollection;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
-use App\Traits\LocalesTrait;
+use App\Repositories\TagRepository;
 
 class TagController extends Controller
 {
-    use LocalesTrait;
+    private $tagRepo;
 
-    public function __construct()
+    public function __construct(TagRepository $tagRepo)
     {
-
+        $this->tagRepo = $tagRepo;
         /* $this->authorizeResource(Tag::class, 'tag'); */
     }
 
@@ -28,15 +28,11 @@ class TagController extends Controller
     {
         $perPage = min(100, (int) request()->get('perPage', 5));
 
-        $query = Tag::queryFilter()->with('translations')->sort();
-
         if ($perPage > -1) {
-            $query = $query->paginate($perPage);
-
-            return new TagCollection($query);
+            return $this->tagRepo->paginate($perPage);
         }
 
-        return $query->get();
+        return $this->tagRepo->all();
     }
 
     /**
@@ -48,8 +44,8 @@ class TagController extends Controller
      */
     public function store(StoreTagRequest $request)
     {
-        $data = $this->formatLocalesFields($request->validated());
-        $tag = Tag::create($data);
+        $tag = $this->tagRepo->create($request->validated());
+
         return response()->json([
             'message' => 'Tag created successfully!',
             'id' => $tag->id,
@@ -64,8 +60,6 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         return new TagResource($tag);
-
-        //
     }
 
     /**
@@ -77,8 +71,9 @@ class TagController extends Controller
      */
     public function update(StoreTagRequest $request, Tag $tag)
     {
-        $data = $this->formatLocalesFields($request->validated());
-        $tag->update($data);
+        /* $data = $this->formatLocalesFields($request->validated()); */
+
+        $this->tagRepo->update($tag, $request->validated());
 
         return response()->json([
             'message' => 'Tag updated successfully!',
@@ -93,7 +88,7 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        $tag->delete();
+        $this->tagRepo->delete($tag);
 
         return response()->json([
             'message' => 'Tag deleted successfully!',

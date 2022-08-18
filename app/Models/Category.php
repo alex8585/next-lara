@@ -5,55 +5,39 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
 use Astrotomic\Translatable\Translatable;
 use App\Facades\TransHelp;
 use Illuminate\Support\Facades\DB;
 
 class Category extends Model
 {
-  use Translatable;
-  use HasFactory;
+    use Translatable;
+    use HasFactory;
 
-  protected $sortFields = ['id', 'name'];
+    protected $sortFields = ['id', 'name'];
 
-  public $translatedAttributes = ['name'];
+    public $translatedAttributes = ['name'];
 
-  public function posts()
-  {
-    return $this->hasMany(Post::class);
-  }
-
-  public static function queryFilter()
-  {
-    return QueryBuilder::for(self::class)->allowedFilters([
-      AllowedFilter::exact('id'),
-      AllowedFilter::callback(
-        'name',
-        fn($query,$name) => $query->whereHas('translations', function ($query) use ($name) {
-          $query->where('locale', app()->getLocale());
-          $query->where('name', 'LIKE', "%{$name}%");
-          /* $query->where(DB::raw('LOWER(category_translations.name)') , 'LIKE', '%' . strtolower($name) . '%'); */
-        })
-      ),
-    ]);
-  }
-
-  public function scopeSort($query)
-  {
-    parent::scopeSort($query);
-
-    $direction = request()->boolean('descending', true) ? 'ASC' : 'DESC';
-    $order = request()->get('orderBy', 'id');
-
-    if($order == 'name') {
-        $query->join('category_translations', function($join) {
-          $loc = app()->getLocale();
-          $join->on('categories.id',  'category_translations.category_id');
-          $join->on('locale',  DB::raw("'${loc}'"));
-        });
-        $query->select('categories.*','category_translations.name as t_name');
-        $query->orderBy('t_name', $direction);
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
-  }
+
+    public function scopeSort($query)
+    {
+        parent::scopeSort($query);
+
+        $direction = request()->boolean('descending', true) ? 'ASC' : 'DESC';
+        $order = request()->get('orderBy', 'id');
+
+        if ($order == 'name') {
+            $query->join('category_translations', function ($join) {
+                $loc = app()->getLocale();
+                $join->on('categories.id', 'category_translations.category_id');
+                $join->on('locale', DB::raw("'${loc}'"));
+            });
+            $query->select('categories.*', 'category_translations.name as t_name');
+            $query->orderBy('t_name', $direction);
+        }
+    }
 }

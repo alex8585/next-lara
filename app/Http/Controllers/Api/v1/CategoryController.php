@@ -7,14 +7,15 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Resources\CategoryCollection;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Traits\LocalesTrait;
+use App\Repositories\CategoryRepository;
 
 class CategoryController extends Controller
 {
-    use LocalesTrait;
+    private $categoryRepo;
 
-    public function __construct()
+    public function __construct(CategoryRepository $categoryRepo)
     {
+        $this->categoryRepo = $categoryRepo;
         /* $this->authorizeResource(Category::class, 'category'); */
     }
 
@@ -27,15 +28,11 @@ class CategoryController extends Controller
     {
         $perPage = min(100, (int) request()->get('perPage', 5));
 
-        $query = Category::queryFilter()->with('translations')->sort();
-
         if ($perPage > -1) {
-            $query = $query->paginate($perPage);
-
-            return new CategoryCollection($query);
+            return $this->categoryRepo->paginate($perPage);
         }
 
-        return $query->get();
+        return $this->categoryRepo->all();
     }
 
     /**
@@ -47,14 +44,11 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $data = $this->formatLocalesFields($request->validated());
-        $category = Category::create($data);
-
+        $category = $this->categoryRepo->create($request->validated());
         return response()->json([
             'message' => 'Category created successfully!',
             'id' => $category->id,
         ]);
-        //
     }
 
     /**
@@ -76,9 +70,7 @@ class CategoryController extends Controller
      */
     public function update(StoreCategoryRequest $request, Category $category)
     {
-        $data = $this->formatLocalesFields($request->validated());
-        $category->update($data);
-
+        $this->categoryRepo->update($category, $request->validated());
         return response()->json([
             'message' => 'Category updated successfully!',
             'id' => $category->id,
@@ -93,7 +85,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $category->delete();
+        $this->categoryRepo->delete($category);
 
         return response()->json([
             'message' => 'Category deleted successfully!',

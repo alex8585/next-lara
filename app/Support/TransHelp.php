@@ -1,5 +1,6 @@
 <?php
 namespace App\Support;
+
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Astrotomic\Translatable\Locales;
 

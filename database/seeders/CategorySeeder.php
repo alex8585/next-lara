@@ -9,18 +9,18 @@ use App\Models\Post;
 
 class CategorySeeder extends Seeder
 {
-  /**
-   * Run the database seeds.
-   *
-   * @return void
-   */
-  public function run()
-  {
-    Category::factory()
-      ->has(Post::factory()->count(3))
-      ->count(5)
-      ->create(); //
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Category::factory()
+          ->has(Post::factory()->count(3))
+          ->count(5)
+          ->create(); //
 
     //
-  }
+    }
 }

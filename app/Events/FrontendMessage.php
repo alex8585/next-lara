@@ -10,30 +10,30 @@ use Illuminate\Queue\SerializesModels;
 
 class FrontendMessage implements ShouldBroadcast
 {
-  use Dispatchable;
-  use InteractsWithSockets;
-  use SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-  public $msg;
+    public $msg;
 
-  /**
-   * Create a new event instance.
-   *
-   * @param mixed $order
-   * @param mixed $msg
-   */
-  public function __construct($msg)
-  {
-    $this->msg = $msg;
-  }
+    /**
+     * Create a new event instance.
+     *
+     * @param mixed $order
+     * @param mixed $msg
+     */
+    public function __construct($msg)
+    {
+        $this->msg = $msg;
+    }
 
-  public function broadcastOn()
-  {
-    return new PrivateChannel('message.dashboard');
-  }
-  /*
-   * Get the channels the event should broadcast on.
-   *
-   * @return \Illuminate\Broadcasting\Channel|array
-   */
+    public function broadcastOn()
+    {
+        return new PrivateChannel('message.dashboard');
+    }
+    /*
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
 }

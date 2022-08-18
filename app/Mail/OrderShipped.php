@@ -9,28 +9,28 @@ use Illuminate\Queue\SerializesModels;
 
 class OrderShipped extends Mailable
 {
-  use Queueable, SerializesModels;
+    use Queueable, SerializesModels;
 
-  public $order;
-  /**
-   * Create a new message instance.
-   *
-   * @return void
-   */
-  public function __construct($txt)
-  {
-    $this->order = $txt;
+    public $order;
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct($txt)
+    {
+        $this->order = $txt;
     //
-  }
+    }
 
-  /**
-   * Build the message.
-   *
-   * @return $this
-   */
-  public function build()
-  {
-    /* return '1111'; */
-    /* return $this->view('mail'); */
-  }
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        /* return '1111'; */
+        /* return $this->view('mail'); */
+    }
 }

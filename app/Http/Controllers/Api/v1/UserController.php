@@ -8,15 +8,16 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use App\Traits\LocalesTrait;
+use App\Repositories\UserRepository;
 
 class UserController extends Controller
 {
-    use LocalesTrait;
+    private $userRepo;
 
-    public function __construct()
+    public function __construct(UserRepository $userRepo)
     {
         $this->authorizeResource(User::class, 'user');
+        $this->userRepo = $userRepo;
     }
 
     /**
@@ -28,11 +29,7 @@ class UserController extends Controller
     {
         $perPage = max(min(100, (int) request()->get('perPage', 5)), 5);
 
-        $query = User::queryFilter()
-      ->sort()
-      ->paginate($perPage);
-
-        return new UserCollection($query);
+        return $this->userRepo->paginate($perPage);
     }
 
     /**
@@ -42,11 +39,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $user = User::create([
-      'name' => $request->safe()->name,
-      'email' => $request->safe()->email,
-      'password' => Hash::make($request->safe()->password),
-    ]);
+        $user = $this->userRepo->create([
+            'name' => $request->safe()->name,
+            'email' => $request->safe()->email,
+            'password' => Hash::make($request->safe()->password),
+        ]);
 
         return response()->json([
       'message' => 'User created successfully!',
@@ -77,16 +74,16 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update([
-      'name' => $request->safe()->name,
-      'email' => $request->safe()->email,
-      'password' => Hash::make($request->safe()->password),
-    ]);
+        $this->userRepo->update($user, [
+           'name' => $request->safe()->name,
+           'email' => $request->safe()->email,
+           'password' => Hash::make($request->safe()->password),
+        ]);
 
         return response()->json([
-      'message' => 'User updated successfully!',
-      'id' => $user->id,
-    ]);
+           'message' => 'User updated successfully!',
+           'id' => $user->id,
+        ]);
     }
 
     /**
@@ -98,11 +95,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
+        $this->userRepo->delete($user);
 
         return response()->json([
-      'message' => 'User deleted successfully!',
-      'id' => $user->id,
-    ]);
+            'message' => 'User deleted successfully!',
+            'id' => $user->id,
+        ]);
     }
 }
