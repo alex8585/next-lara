@@ -27,7 +27,7 @@ class TagController extends Controller
     public function index()
     {
         $perPage = min(100, (int) request()->get('perPage', 5));
-
+    
         if ($perPage > -1) {
             return $this->tagRepo->paginate($perPage);
         }
