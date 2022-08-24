@@ -4,4 +4,3 @@
 # npm test
 php /usr/local/bin/php-cs-fixer fix
 git add .
-
