@@ -14,28 +14,34 @@ class BaseRepository implements EloquentRepositoryInterface
      * @var Model
      */
     protected $model;
-
+    private string $modelClass;
     /**
      * BaseRepository constructor.
      *
      * @param Model $model
      */
-    public function __construct(Model $model)
+    public function __construct(?string $modelClass = null)
     {
-        $this->model = $model;
+        $this->modelClass = $modelClass ?: self::guessModelClass();
+        $this->model = app($this->modelClass);
     }
- 
+
+    private static function guessModelClass(): string
+    {
+        return preg_replace('/(.+)\\\\Repositories\\\\(.+)Repository$/m', '$1\Models\\\$2', static::class);
+    }
+
     /**
-    * @param array $attributes
-    *
-    * @return Model
-    */
+     * @param array $attributes
+     *
+     * @return Model
+     */
     public function create(array $attributes): Model
     {
         $data = $this->formatLocalesFields($attributes);
         return $this->model->create($data);
     }
- 
+
     public function update(Model $model, array $attributes): bool
     {
         $data = $this->formatLocalesFields($attributes);
@@ -48,9 +54,9 @@ class BaseRepository implements EloquentRepositoryInterface
     }
 
     /**
-    * @param $id
-    * @return Model
-    */
+     * @param $id
+     * @return Model
+     */
     public function find($id): ?Model
     {
         return $this->model->find($id);

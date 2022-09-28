@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Post;
 use Illuminate\Support\Collection;
-use App\Http\Resources\PostResource;
 use App\Http\Resources\PostCollection;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -13,13 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 class PostRepository extends BaseRepository
 {
     /**
-     * TagRepository constructor.
+     * PostRepository constructor.
      *
-     * @param Tag $model
+     * @param Post $model
      */
-    public function __construct(Post $model)
+    public function __construct()
     {
-        parent::__construct($model);
+        parent::__construct(Post::class);
     }
 
     /**
@@ -75,13 +74,13 @@ class PostRepository extends BaseRepository
     private function baseQuery(): QueryBuilder
     {
         return $this->queryFilter()
-             ->with('translations')
-             ->with(['tags'=> function ($q) {
-                 $q->with('translation');
-             }])
-             ->with(['category'=> function ($q) {
-                 $q->with('translation');
-             }])->sort();
+            ->with('translations')
+            ->with(['tags' => function ($q) {
+                $q->with('translation');
+            }])
+            ->with(['category' => function ($q) {
+                $q->with('translation');
+            }])->sort();
     }
 
     private function queryFilter()

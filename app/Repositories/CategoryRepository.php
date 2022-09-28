@@ -15,9 +15,9 @@ class CategoryRepository extends BaseRepository
      *
      * @param Tag $model
      */
-    public function __construct(Category $model)
+    public function __construct()
     {
-        parent::__construct($model);
+        parent::__construct(Category::class);
     }
 
     /**
@@ -42,15 +42,15 @@ class CategoryRepository extends BaseRepository
     private function queryFilter()
     {
         return QueryBuilder::for($this->model)->allowedFilters([
-          AllowedFilter::exact('id'),
-          AllowedFilter::callback(
-              'name',
-              fn ($query, $name) => $query->whereHas('translations', function ($query) use ($name) {
-                  $query->where('locale', app()->getLocale());
-                  $query->where('name', 'LIKE', "%{$name}%");
-                  /* $query->where(DB::raw('LOWER(category_translations.name)') , 'LIKE', '%' . strtolower($name) . '%'); */
-              })
-          ),
+            AllowedFilter::exact('id'),
+            AllowedFilter::callback(
+                'name',
+                fn ($query, $name) => $query->whereHas('translations', function ($query) use ($name) {
+                    $query->where('locale', app()->getLocale());
+                    $query->where('name', 'LIKE', "%{$name}%");
+                    /* $query->where(DB::raw('LOWER(category_translations.name)') , 'LIKE', '%' . strtolower($name) . '%'); */
+                })
+            ),
         ]);
     }
 }

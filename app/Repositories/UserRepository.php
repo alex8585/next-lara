@@ -15,9 +15,9 @@ class UserRepository extends BaseRepository
      *
      * @param Tag $model
      */
-    public function __construct(User $model)
+    public function __construct()
     {
-        parent::__construct($model);
+        parent::__construct(User::class);
     }
 
     /**
@@ -39,12 +39,12 @@ class UserRepository extends BaseRepository
         return $this->queryFilter()->sort();
     }
 
-  private function queryFilter()
-  {
-      return QueryBuilder::for($this->model)->allowedFilters([
-        AllowedFilter::exact('id'),
-        AllowedFilter::partial('name'),
-        AllowedFilter::partial('email'),
-      ]);
-  }
+    private function queryFilter()
+    {
+        return QueryBuilder::for($this->model)->allowedFilters([
+            AllowedFilter::exact('id'),
+            AllowedFilter::partial('name'),
+            AllowedFilter::partial('email'),
+        ]);
+    }
 }

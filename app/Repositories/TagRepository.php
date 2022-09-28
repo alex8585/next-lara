@@ -15,9 +15,9 @@ class TagRepository extends BaseRepository
      *
      * @param Tag $model
      */
-    public function __construct(Tag $model)
+    public function __construct()
     {
-        parent::__construct($model);
+        parent::__construct(Tag::class);
     }
 
     /**

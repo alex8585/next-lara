@@ -19,15 +19,22 @@ class UserCollection extends ResourceCollection
     {
         $user = new User();
 
+        $currentUser = Auth::user();
+        $can_create = $can_update = $can_delete = false;
+        if ($currentUser) {
+            $can_create = $currentUser->can('create', User::class);
+            $can_update = $currentUser->can('update', $user);
+            $can_delete = $currentUser->can('delete', $user);
+        }
         return [
           'data' => $this->collection,
           'metaData' => [
             'rowsNumber' => $this->total(),
             'rowsPerPage' => $this->perPage(),
             'page' => $this->currentPage(),
-            'can_create' => Auth::user()->can('create', User::class),
-            'can_update' => Auth::user()->can('update', $user),
-            'can_delete' => Auth::user()->can('delete', $user),
+            'can_create' => $can_create,
+            'can_update' => $can_update,
+            'can_delete' =>$can_delete,
           ],
         ];
     }
