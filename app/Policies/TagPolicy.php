@@ -62,24 +62,4 @@ class TagPolicy
     {
         return in_array($user->role, [UserRole::Admin]);
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @return bool|\Illuminate\Auth\Access\Response
-     */
-    public function restore(User $user, Tag $tag)
-    {
-    //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @return bool|\Illuminate\Auth\Access\Response
-     */
-    public function forceDelete(User $user, Tag $tag)
-    {
-    //
-    }
 }

@@ -30,6 +30,7 @@ class OrderShipped extends Mailable
      */
     public function build()
     {
+        return  $this;
         /* return '1111'; */
         /* return $this->view('mail'); */
     }

@@ -122,6 +122,6 @@ class Hello extends Command
         /* dd($value); */
         /* $this->info('Something went wrong!'); */
         /* sleep(10); */
-        /* return 0; */
+        return 0;
     }
 }

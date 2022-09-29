@@ -9,6 +9,7 @@ use App\Facades\TimeConverter as Tc;
 
 class Timestamp implements CastsAttributes, SerializesCastableAttributes
 {
+    private $format;
     /**
      * Cast the given value.
      *

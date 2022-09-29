@@ -70,14 +70,4 @@ class UserPolicy
     //
         return true;
     }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @return bool|\Illuminate\Auth\Access\Response
-     */
-    public function forceDelete(User $user, User $model)
-    {
-    //
-    }
 }

@@ -8,6 +8,7 @@ use App\Http\Resources\PostCollection;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostRepository extends BaseRepository
 {
@@ -71,7 +72,7 @@ class PostRepository extends BaseRepository
         return $result;
     }
 
-    private function baseQuery(): QueryBuilder
+    private function baseQuery(): Builder
     {
         return $this->queryFilter()
             ->with('translations')
@@ -83,7 +84,7 @@ class PostRepository extends BaseRepository
             }])->sort();
     }
 
-    private function queryFilter()
+    private function queryFilter(): Builder
     {
         return QueryBuilder::for($this->model)->allowedFilters([
             AllowedFilter::exact('id'),
@@ -94,6 +95,6 @@ class PostRepository extends BaseRepository
                     $query->where('name', 'LIKE', "%{$name}%");
                 })
             ),
-        ]);
+        ])->getEloquentBuilder();
     }
 }
