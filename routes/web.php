@@ -38,6 +38,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function()
 });
 
 Route::get('/', function () {
+     return view('map', ['name' => 'James']);
     /* $perPage = min(100, (int) request()->get('perPage', 5)); */
 
     /* $query = Category::queryFilter()->sort(); */
