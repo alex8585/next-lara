@@ -10,6 +10,7 @@
         "beyondcode/laravel-websockets": "^1.13",
         "guzzlehttp/guzzle": "^7.2",
         "http-interop/http-factory-guzzle": "^1.2",
+        "irazasyed/telegram-bot-sdk": "^3.9",
         "laravel/breeze": "^1.9",
         "laravel/framework": "^9.2",
         "laravel/octane": "^1.2",

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\v1\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,7 @@ Route::prefix('v1')->group(function() {
             Route::apiResource('categories', CategoryController::class);
             Route::apiResource('tags', TagController::class);
             Route::apiResource('users', UserController::class);
+            Route::get('dashboard', [DashboardController::class, 'index']);
         });
     });
 
