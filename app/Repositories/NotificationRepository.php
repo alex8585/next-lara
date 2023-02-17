@@ -47,9 +47,14 @@ class NotificationRepository extends BaseRepository
 
     private function baseQuery(): QueryBuilder
     {
-        return $this->queryFilter()->with(['symbol' => function ($q) {
-            return $q->select(['id','base']);
-        }])->sort();
+        /* return $this->queryFilter()->with(['symbol' => function ($q) { */
+        /*     return $q->select(['id','base']); */
+        /* }])->sort(); */
+
+        return $this->queryFilter()
+             ->select(['notifications.*','symbols.base'])
+                  ->join('symbols', 'notifications.symbol_id', '=', 'symbols.id')
+                  ->sort();
     }
 
     private function queryFilter()

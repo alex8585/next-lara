@@ -25,7 +25,7 @@ class NotificationResource extends JsonResource
         return [
             'id' => $this->id,
             'symbol_id' => $this->symbol_id,
-            'symbol' => $this->symbol->base,
+            'symbol' => $this->base,
             'price' => $this->price,
 
             'created_at' => Tc::toTimestamp($created_at),
