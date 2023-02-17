@@ -5,9 +5,11 @@ use App\Http\Controllers\Api\v1\PostController;
 use App\Http\Controllers\Api\v1\TagController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\v1\SymbolsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\DashboardController;
+use App\Http\Controllers\Api\v1\NotificationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +51,9 @@ Route::prefix('v1')->group(function() {
             Route::apiResource('categories', CategoryController::class);
             Route::apiResource('tags', TagController::class);
             Route::apiResource('users', UserController::class);
+            Route::apiResource('notifications', NotificationsController::class);
             Route::get('dashboard', [DashboardController::class, 'index']);
+            Route::get('symbols', [SymbolsController::class, 'index']);
         });
     });
 

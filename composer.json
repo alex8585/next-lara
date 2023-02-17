@@ -8,6 +8,7 @@
         "php": "^8.0.2",
         "astrotomic/laravel-translatable": "^11.10",
         "beyondcode/laravel-websockets": "^1.13",
+        "ccxt/ccxt": "^1.16",
         "guzzlehttp/guzzle": "^7.2",
         "http-interop/http-factory-guzzle": "^1.2",
         "irazasyed/telegram-bot-sdk": "^3.9",
