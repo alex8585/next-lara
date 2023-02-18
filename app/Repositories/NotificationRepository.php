@@ -52,7 +52,7 @@ class NotificationRepository extends BaseRepository
         /* }])->sort(); */
 
         return $this->queryFilter()
-             ->select(['notifications.*','symbols.base'])
+             ->select(['notifications.*','symbols.base', 'symbols.symbol'])
                   ->join('symbols', 'notifications.symbol_id', '=', 'symbols.id')
                   ->sort();
     }
