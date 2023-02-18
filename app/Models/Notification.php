@@ -12,7 +12,7 @@ class Notification extends Model
 
     protected $guarded = ['symbol' ];
 
-    protected $sortFields = ['price'];
+    protected $sortFields = ['direction','price', 'id'];
 
     public function symbol()
     {

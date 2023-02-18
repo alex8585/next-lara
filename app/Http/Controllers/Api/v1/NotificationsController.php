@@ -45,6 +45,7 @@ class NotificationsController extends Controller
     {
         $validated = $request->safe();
         $validated['symbol_id'] = $request->safe()->symbol['value'];
+        $validated['direction'] = $request->safe()->direction['value'];
 
         $notif = $this->notifRepo->create($validated->all());
 
@@ -77,6 +78,7 @@ class NotificationsController extends Controller
 
         $validated = $request->safe();
         $validated['symbol_id'] = $request->safe()->symbol['value'];
+        $validated['direction'] = $request->safe()->direction['value'];
 
         $this->notifRepo->update($notification, $validated->all());
 

@@ -61,7 +61,12 @@ class NotificationRepository extends BaseRepository
     {
         return QueryBuilder::for($this->model)->allowedFilters([
             AllowedFilter::exact('id'),
-            AllowedFilter::partial('symbol'),
+            AllowedFilter::callback(
+                'symbol',
+                fn ($query, $name) => $query->whereHas('symbol', function ($query) use ($name) {
+                    $query->where('base', 'LIKE', "%{$name}%");
+                })
+            ),
             AllowedFilter::partial('price'),
         ]);
     }

@@ -32,6 +32,9 @@ class StoreNotificationRequest extends FormRequest
                 'required',
                 Rule::exists(Symbol::class, 'id'),
 
+            ],
+            'direction.value' => [
+                'required'
             ]
         ];
     }
