@@ -26,7 +26,7 @@ class NotificationRepository extends BaseRepository
      */
     public function all(): Collection
     {
-        return $this->baseQuery()->get();
+        return $this->baseQuery()->where('sent', 0)->get();
     }
 
     public function create(array $attributes): Model
@@ -54,6 +54,7 @@ class NotificationRepository extends BaseRepository
         return $this->queryFilter()
              ->select(['notifications.*','symbols.base', 'symbols.symbol'])
                   ->join('symbols', 'notifications.symbol_id', '=', 'symbols.id')
+                  ->where('sent', 0)
                   ->sort();
     }
 

@@ -31,7 +31,9 @@ class StoreNotificationRequest extends FormRequest
             'symbol.value' => [
                 'required',
                 Rule::exists(Symbol::class, 'id'),
-
+                Rule::unique('notifications', 'symbol_id')->where(function ($query) {
+                    return $query->where('sent', 0);
+                }),
             ],
             'direction.value' => [
                 'required'

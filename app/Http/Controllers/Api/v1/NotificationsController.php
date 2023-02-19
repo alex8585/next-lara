@@ -7,6 +7,7 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Repositories\NotificationRepository;
 use App\Http\Requests\StoreNotificationRequest;
+use Illuminate\Support\Facades\Cache;
 
 class NotificationsController extends Controller
 {
@@ -49,6 +50,8 @@ class NotificationsController extends Controller
 
         $notif = $this->notifRepo->create($validated->all());
 
+        Cache::forget('notifications');
+
         return response()->json([
             'message' => 'Notification created successfully!',
             'id' => $notif->id,
@@ -82,6 +85,8 @@ class NotificationsController extends Controller
 
         $this->notifRepo->update($notification, $validated->all());
 
+        Cache::forget('notifications');
+
         return response()->json([
             'message' => 'Notification updated successfully!',
             'id' => $notification->id,
@@ -96,6 +101,8 @@ class NotificationsController extends Controller
     public function destroy(Notification $notification)
     {
         $this->notifRepo->delete($notification);
+
+        Cache::forget('notifications');
 
         return response()->json([
             'message' => 'Notification deleted successfully!',
